@@ -11,9 +11,21 @@ POST Register :
 http://localhost:8080/register?name=Ju&psw=******
 
 
-# Install module with
+# Run with docker with 
+    $ docker-compose up
+Si des modifications sont effectués il faut rajouter le flag `--build`
 
+
+### Install Mongo with
     $ go get go.mongodb.org/mongo-driver/mongo
+
+### Install protoc with apt or brew(MacOS)
+    $ apt install -y protobuf-compiler
+    $ brew install protobuf
+    $ protoc --version  
+Ensure compiler version is 3+
+
+
 
 # Errors 
 
