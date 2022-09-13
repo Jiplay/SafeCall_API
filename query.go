@@ -8,10 +8,85 @@ import (
 	"net/http"
 )
 
-func weather(city string) string {
+// func weather(city string) string {
 
-	url := "http://api.openweathermap.org/data/2.5/weather?q=" + city + "&APPID=ab22018089b37f82cc084867cd1a3743&units=metric"
-	method := "GET"
+// 	url := "http://api.openweathermap.org/data/2.5/weather?q=" + city + "&APPID=ab22018089b37f82cc084867cd1a3743&units=metric"
+// 	method := "GET"
+
+// 	client := &http.Client{}
+// 	req, err := http.NewRequest(method, url, nil)
+
+// 	if err != nil {
+// 		fmt.Println(err)
+// 		return ""
+// 	}
+
+// 	res, err := client.Do(req)
+// 	if err != nil {
+// 		fmt.Println(err)
+// 		return ""
+// 	}
+// 	defer res.Body.Close()
+
+// 	body, err := ioutil.ReadAll(res.Body)
+// 	if err != nil {
+// 		fmt.Println(err)
+// 		return ""
+// 	}
+
+// 	var dat map[string]interface{}
+// 	if err := json.Unmarshal(body, &dat); err != nil {
+// 		panic(err)
+// 	}
+
+// 	return string(body)
+// }
+
+// func login(username string, pws string) string {
+
+// 	url := "http://localhost:8081/login/" + username + "/" + pws
+// 	method := "GET"
+
+// 	client := &http.Client{}
+// 	req, err := http.NewRequest(method, url, nil)
+
+// 	if err != nil {
+// 		fmt.Println(err)
+// 		return ""
+// 	}
+
+// 	res, err := client.Do(req)
+// 	if err != nil {
+// 		fmt.Println(err)
+// 		return ""
+// 	}
+// 	defer res.Body.Close()
+
+// 	body, err := ioutil.ReadAll(res.Body)
+// 	if err != nil {
+// 		fmt.Println(err)
+// 		return ""
+// 	}
+
+// 	var dat map[string]interface{}
+// 	if err := json.Unmarshal(body, &dat); err != nil {
+// 		panic(err)
+// 	}
+
+// 	return string(body)
+// }
+
+func account(feature string, username string, pws string) string {
+
+	url := "http://localhost:8081/" + feature + "/" + username + "/" + pws
+
+	method := ""
+
+	if feature == "login" {
+		method = "GET"
+	} else {
+		method = "POST"
+	}
 
 	client := &http.Client{}
 	req, err := http.NewRequest(method, url, nil)

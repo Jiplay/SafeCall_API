@@ -1,8 +1,7 @@
 package main
 
 import (
-// "strconv"
-// "strings"
+	"strings"
 )
 
 type Profile struct {
@@ -15,32 +14,23 @@ type Weather struct {
 	Weather string `json:"weather"`
 }
 
-// func demo(uid, nb string) Profile {
-// 	nbAsStr, _ := strconv.Atoi(nb)
-// 	userProfile := Profile{Name: uid, Nb: nbAsStr}
+func loginHandler(id string, psw string) bool {
 
-// 	return userProfile
-// }
+	response := account("login", id, psw)
 
-// func loginHandler(id, psw string) bool {
+	if strings.Contains(response, "success") == true {
+		return true
+	}
+	return false
+}
 
-// resp := weather(city)
-// parsing := strings.Split(resp, ":")
-// weather := ""
-// temp := ""
+func registerHandler(id string, psw string) string {
 
-// for _, s := range parsing {
-// 	if strings.Contains(s, "description") == true {
-// 		a := strings.Split(s, ",")
-// 		weather = a[0][1 : len(a[0])-1]
-// 	}
-// 	if strings.Contains(s, "feels_like") == true {
-// 		a := strings.Split(s, ",")
-// 		temp = a[0]
-// 	}
-// }
+	response := account("register", id, psw)
 
-// dest := Weather{Temp: temp, Weather: weather}
+	if strings.Contains(response, "success") == true {
+		return "200"
+	}
 
-// 	return true
-// }
+	return response[11 : len(response)-2]
+}

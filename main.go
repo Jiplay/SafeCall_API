@@ -29,37 +29,38 @@ func main() {
 
 	r.POST("/register/:login/:psw", register)
 
-	r.Run()
+	r.Run(":8080")
 }
 
-// Seach how to communicate with microservices
-
 func login(c *gin.Context) {
-	// login := c.Param("login")
-	// psw := c.Param("psw")
+	login := c.Param("login")
+	psw := c.Param("psw")
 
-	// if LoginHandler(login, psw) != true {
-	// 	c.JSON(200, gin.H{
-	// 		"failed": "404",
-	// 	})
-	// } else {
-	// 	c.JSON(200, gin.H{
-	// 		"success": "200",
-	// 	})
-	// }
+	if loginHandler(login, psw) != true {
+		c.JSON(200, gin.H{
+			"failed": "404",
+		})
+	} else {
+		c.JSON(200, gin.H{
+			"success": "200",
+		})
+	}
+
 }
 
 func register(c *gin.Context) {
-	// login := c.Param("login")
-	// psw := c.Param("psw")
+	login := c.Param("login")
+	psw := c.Param("psw")
 
-	// if RegisterHandler(login, psw) != true {
-	// 	c.JSON(200, gin.H{
-	// 		"failed": "404",
-	// 	})
-	// } else {
-	// 	c.JSON(200, gin.H{
-	// 		"success": "200",
-	// 	})
-	// }
+	resp := registerHandler(login, psw)
+
+	if resp != "200" {
+		c.JSON(200, gin.H{
+			"failed": resp,
+		})
+	} else {
+		c.JSON(200, gin.H{
+			"success": "200",
+		})
+	}
 }
