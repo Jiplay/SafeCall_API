@@ -1,0 +1,7 @@
+version: '3'
+services:
+  back:
+    build: .
+    command: go run main.go
+    ports:
+      - "8080:8080"
