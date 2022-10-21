@@ -78,7 +78,7 @@ import (
 
 func account(feature string, username string, pws string) string {
 
-	url := "http://localhost:8081/" + feature + "/" + username + "/" + pws
+	url := "https://safecall-authentificator.herokuapp.com/" + feature + "/" + username + "/" + pws
 
 	method := ""
 
