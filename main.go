@@ -29,7 +29,7 @@ func main() {
 
 	r.POST("/register/:login/:psw", register)
 
-	r.Run(":8080")
+	r.Run()
 }
 
 func login(c *gin.Context) {
