@@ -36,7 +36,7 @@ func login(c *gin.Context) {
 	login := c.Param("login")
 	psw := c.Param("psw")
 
-	if loginHandler(login, psw) != true {
+	if LoginHandler(login, psw) != true {
 		c.JSON(200, gin.H{
 			"failed": "404",
 		})
@@ -45,14 +45,13 @@ func login(c *gin.Context) {
 			"success": "200",
 		})
 	}
-
 }
 
 func register(c *gin.Context) {
 	login := c.Param("login")
 	psw := c.Param("psw")
 
-	resp := registerHandler(login, psw)
+	resp := RegisterHandler(login, psw)
 
 	if resp != "200" {
 		c.JSON(200, gin.H{

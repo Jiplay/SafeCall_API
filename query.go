@@ -1,118 +1,65 @@
 package main
 
 import (
-	"encoding/json"
-	"fmt"
+	"context"
+	"log"
+	"time"
 
-	"io/ioutil"
-	"net/http"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-// func weather(city string) string {
-
-// 	url := "http://api.openweathermap.org/data/2.5/weather?q=" + city + "&APPID=ab22018089b37f82cc084867cd1a3743&units=metric"
-// 	method := "GET"
-
-// 	client := &http.Client{}
-// 	req, err := http.NewRequest(method, url, nil)
-
-// 	if err != nil {
-// 		fmt.Println(err)
-// 		return ""
-// 	}
-
-// 	res, err := client.Do(req)
-// 	if err != nil {
-// 		fmt.Println(err)
-// 		return ""
-// 	}
-// 	defer res.Body.Close()
-
-// 	body, err := ioutil.ReadAll(res.Body)
-// 	if err != nil {
-// 		fmt.Println(err)
-// 		return ""
-// 	}
-
-// 	var dat map[string]interface{}
-// 	if err := json.Unmarshal(body, &dat); err != nil {
-// 		panic(err)
-// 	}
-
-// 	return string(body)
-// }
-
-// func login(username string, pws string) string {
-
-// 	url := "http://localhost:8081/login/" + username + "/" + pws
-// 	method := "GET"
-
-// 	client := &http.Client{}
-// 	req, err := http.NewRequest(method, url, nil)
-
-// 	if err != nil {
-// 		fmt.Println(err)
-// 		return ""
-// 	}
-
-// 	res, err := client.Do(req)
-// 	if err != nil {
-// 		fmt.Println(err)
-// 		return ""
-// 	}
-// 	defer res.Body.Close()
-
-// 	body, err := ioutil.ReadAll(res.Body)
-// 	if err != nil {
-// 		fmt.Println(err)
-// 		return ""
-// 	}
-
-// 	var dat map[string]interface{}
-// 	if err := json.Unmarshal(body, &dat); err != nil {
-// 		panic(err)
-// 	}
-
-// 	return string(body)
-// }
-
-func account(feature string, username string, pws string) string {
-
-	url := "https://safecall-authentificator.herokuapp.com/" + feature + "/" + username + "/" + pws
-
-	method := ""
-
-	if feature == "login" {
-		method = "GET"
-	} else {
-		method = "POST"
-	}
-
-	client := &http.Client{}
-	req, err := http.NewRequest(method, url, nil)
-
+func AddUser(uri, login, psw, user string) bool {
+	client, err := mongo.NewClient(options.Client().ApplyURI(uri))
 	if err != nil {
-		fmt.Println(err)
-		return ""
+		log.Fatal(err)
+		return false
 	}
-
-	res, err := client.Do(req)
+	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	err = client.Connect(ctx)
 	if err != nil {
-		fmt.Println(err)
-		return ""
+		log.Fatal(err)
+		return false
 	}
-	defer res.Body.Close()
+	defer client.Disconnect(ctx)
 
-	body, err := ioutil.ReadAll(res.Body)
+	quickstartDatabase := client.Database("userData")
+	podcastsCollection := quickstartDatabase.Collection("loginInfo")
+
+	podcastsCollection.InsertOne(ctx, bson.D{
+		{Key: "login", Value: login},
+		{Key: "psw", Value: psw},
+		{Key: "data", Value: user},
+	})
+	return true
+}
+
+func GetUsers(uri string) []bson.M {
+	client, err := mongo.NewClient(options.Client().ApplyURI(uri))
 	if err != nil {
-		fmt.Println(err)
-		return ""
+		log.Fatal(err)
+		return nil
+	}
+	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	err = client.Connect(ctx)
+	if err != nil {
+		log.Fatal(err)
+		return nil
+	}
+	defer client.Disconnect(ctx)
+
+	quickstartDatabase := client.Database("userData")
+	podcastsCollection := quickstartDatabase.Collection("loginInfo")
+
+	cursor, err := podcastsCollection.Find(ctx, bson.M{})
+	if err != nil {
+		log.Fatal(err)
+	}
+	var users []bson.M
+	if err = cursor.All(ctx, &users); err != nil {
+		log.Fatal(err)
 	}
 
-	var dat map[string]interface{}
-	if err := json.Unmarshal(body, &dat); err != nil {
-		panic(err)
-	}
-
-	return string(body)
+	return users
 }
