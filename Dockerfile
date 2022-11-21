@@ -6,6 +6,7 @@ WORKDIR /src
 
 COPY go.mod ./
 COPY go.sum ./
+COPY config.json ./
 RUN go mod download
 
 COPY *.go ./
