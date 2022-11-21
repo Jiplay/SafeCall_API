@@ -1,36 +1,85 @@
 package main
 
 import (
-	"strings"
+	"encoding/json"
+	"io/ioutil"
+	"log"
+	"os"
+
+	"google.golang.org/protobuf/proto"
 )
 
-type Profile struct {
-	Name string `json:"name"`
-	Nb   int    `json:"nb"`
+type Credentials struct {
+	Uri string `json:"uri"`
 }
 
-type Weather struct {
-	Temp    string `json:"temp"`
-	Weather string `json:"weather"`
-}
+// This function will get the uri in the json file to id to the db
+func getCredentials() string {
+	fileContent, err := os.Open("config.json")
 
-func loginHandler(id string, psw string) bool {
-
-	response := account("login", id, psw)
-
-	if strings.Contains(response, "success") == true {
-		return true
+	if err != nil {
+		log.Fatal(err)
+		return ""
 	}
+
+	defer fileContent.Close()
+
+	byteResult, _ := ioutil.ReadAll(fileContent)
+
+	res := Credentials{}
+	json.Unmarshal([]byte(byteResult), &res)
+
+	return res.Uri
+}
+
+func LoginHandler(id, psw string) bool {
+	uri := getCredentials()
+	users := GetUsers(uri)
+
+	for _, info := range users {
+		if info["login"] == id && info["psw"] == psw {
+			return true
+		}
+	}
+
 	return false
 }
 
-func registerHandler(id string, psw string) string {
+func userToProto(username, psw string) UserMessage {
+	user := UserMessage{
+		Id:       1,
+		Username: username,
+		Password: psw,
+		Settings: &SettingsMessage{
+			DoNotDisturb: true,
+			Language:     "eng",
+		},
+	}
+	return user
+}
 
-	response := account("register", id, psw)
+func RegisterHandler(id, psw string) string {
+	uri := getCredentials()
+	users := GetUsers(uri)
 
-	if strings.Contains(response, "success") == true {
-		return "200"
+	if len(id) < 5 {
+		return "id too short" // Id too short
 	}
 
-	return response[11 : len(response)-2]
+	if len(psw) < 7 {
+		return "password too short" // password too short
+	}
+
+	for _, info := range users {
+		if info["login"] == id {
+			return "Id already taken" // Id already taken
+		}
+	}
+
+	protoUser := userToProto(id, psw)
+	binary, _ := proto.Marshal(&protoUser)
+	if AddUser(uri, id, psw, string(binary)) != true {
+		return "Unknown error"
+	}
+	return "200"
 }
