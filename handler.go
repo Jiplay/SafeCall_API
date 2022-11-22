@@ -2,15 +2,22 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
 
+	"github.com/google/uuid"
 	"google.golang.org/protobuf/proto"
 )
 
 type Credentials struct {
 	Uri string `json:"uri"`
+}
+
+func genUUID() string {
+	id := uuid.New()
+	return id.String()
 }
 
 // This function will get the uri in the json file to id to the db
@@ -32,17 +39,19 @@ func getCredentials() string {
 	return res.Uri
 }
 
-func LoginHandler(id, psw string) bool {
+func LoginHandler(id, psw string) string {
 	uri := getCredentials()
 	users := GetUsers(uri)
 
 	for _, info := range users {
 		if info["login"] == id && info["psw"] == psw {
-			return true
+			fmt.Println(info["id"])
+			userID := info["id"].(string)
+			return userID
 		}
 	}
 
-	return false
+	return "failed"
 }
 
 func userToProto(username, psw string) UserMessage {
@@ -78,8 +87,28 @@ func RegisterHandler(id, psw string) string {
 
 	protoUser := userToProto(id, psw)
 	binary, _ := proto.Marshal(&protoUser)
-	if AddUser(uri, id, psw, string(binary)) != true {
+	userUUID := genUUID()
+	if AddUser(uri, id, psw, string(binary), userUUID) != true {
+		return "Unknown error"
+	}
+	if CreateProfile(uri, id, userUUID) != true {
 		return "Unknown error"
 	}
 	return "200"
+}
+
+func postProfileHandler(endpoint, userID, data string) string {
+	uri := getCredentials()
+	if len(userID) > 45 {
+		return "failed"
+	}
+
+	if endpoint == "FullName" {
+		if len(data) > 30 {
+			return "Full Name too long"
+		}
+	}
+
+	UpdateProfile(uri, endpoint, userID, data)
+	return "success"
 }

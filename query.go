@@ -2,7 +2,11 @@ package main
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
 	"log"
+	"net/http"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -10,7 +14,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func AddUser(uri, login, psw, user string) bool {
+func AddUser(uri, login, psw, user, userUUID string) bool {
 	client, err := mongo.NewClient(options.Client().ApplyURI(uri))
 	if err != nil {
 		log.Fatal(err)
@@ -25,13 +29,46 @@ func AddUser(uri, login, psw, user string) bool {
 	defer client.Disconnect(ctx)
 
 	quickstartDatabase := client.Database("userData")
-	podcastsCollection := quickstartDatabase.Collection("loginInfo")
+	loginCollection := quickstartDatabase.Collection("loginInfo")
 
-	podcastsCollection.InsertOne(ctx, bson.D{
+	loginCollection.InsertOne(ctx, bson.D{
+		{Key: "id", Value: userUUID},
 		{Key: "login", Value: login},
 		{Key: "psw", Value: psw},
 		{Key: "data", Value: user},
 	})
+	return true
+}
+
+func CreateProfile(uri, login, userUUID string) bool {
+	url := "http://localhost:8081/create/" + login + "/" + userUUID
+
+	client := &http.Client{}
+	req, err := http.NewRequest("POST", url, nil)
+
+	if err != nil {
+		fmt.Println(err)
+		return false
+	}
+
+	res, err := client.Do(req)
+	if err != nil {
+		fmt.Println(err)
+		return false
+	}
+	defer res.Body.Close()
+
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		fmt.Println(err)
+		return false
+	}
+
+	var dat map[string]interface{}
+	if err := json.Unmarshal(body, &dat); err != nil {
+		panic(err)
+	}
+
 	return true
 }
 
@@ -50,9 +87,9 @@ func GetUsers(uri string) []bson.M {
 	defer client.Disconnect(ctx)
 
 	quickstartDatabase := client.Database("userData")
-	podcastsCollection := quickstartDatabase.Collection("loginInfo")
+	loginCollection := quickstartDatabase.Collection("loginInfo")
 
-	cursor, err := podcastsCollection.Find(ctx, bson.M{})
+	cursor, err := loginCollection.Find(ctx, bson.M{})
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -62,4 +99,36 @@ func GetUsers(uri string) []bson.M {
 	}
 
 	return users
+}
+
+func UpdateProfile(uri, endpoint, userID, data string) bool {
+	url := "http://localhost:8081/" + endpoint + "/" + userID + "/" + data
+
+	client := &http.Client{}
+	req, err := http.NewRequest("POST", url, nil)
+
+	if err != nil {
+		fmt.Println(err)
+		return false
+	}
+
+	res, err := client.Do(req)
+	if err != nil {
+		fmt.Println(err)
+		return false
+	}
+	defer res.Body.Close()
+
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		fmt.Println(err)
+		return false
+	}
+
+	var dat map[string]interface{}
+	if err := json.Unmarshal(body, &dat); err != nil {
+		panic(err)
+	}
+
+	return true
 }
