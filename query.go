@@ -132,3 +132,35 @@ func UpdateProfile(uri, endpoint, userID, data string) bool {
 
 	return true
 }
+
+func getProfile(userID string) string {
+	url := "http://localhost:8081/Profile" + "/" + userID
+
+	client := &http.Client{}
+	req, err := http.NewRequest("GET", url, nil)
+
+	if err != nil {
+		fmt.Println(err)
+		return "false"
+	}
+
+	res, err := client.Do(req)
+	if err != nil {
+		fmt.Println(err)
+		return "false"
+	}
+	defer res.Body.Close()
+
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		fmt.Println(err)
+		return "false"
+	}
+
+	var dat map[string]interface{}
+	if err := json.Unmarshal(body, &dat); err != nil {
+		panic(err)
+	}
+
+	return string(body)
+}

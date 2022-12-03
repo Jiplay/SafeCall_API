@@ -100,7 +100,7 @@ func RegisterHandler(id, psw string) string {
 func postProfileHandler(endpoint, userID, data string) string {
 	uri := getCredentials()
 	if len(userID) > 45 {
-		return "failed"
+		return "User ID too long"
 	}
 
 	if endpoint == "FullName" {
@@ -109,6 +109,17 @@ func postProfileHandler(endpoint, userID, data string) string {
 		}
 	}
 
+	if endpoint == "PhoneNB" {
+		if len(data) > 15 {
+			return "Phone NB too long"
+		}
+	}
+
 	UpdateProfile(uri, endpoint, userID, data)
 	return "success"
+}
+
+func getProfileHandler(userID string) {
+	resp := getProfile(userID)
+	fmt.Println(resp)
 }

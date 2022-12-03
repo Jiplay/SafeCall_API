@@ -26,10 +26,13 @@ func main() {
 	r.Use(CORS())
 
 	r.GET("/login/:login/:psw", login)
+	r.GET("/profile/:userID", getUserProfile)
 
 	r.POST("/register/:login/:psw", register)
 	r.POST("/profileDescription/:userID/:data", postDescription)
 	r.POST("/profileFullName/:userID/:data", postFullName)
+	r.POST("/profilePhoneNB/:userID/:data", postPhoneNB)
+	r.POST("/profileEmail/:userID/:data", postEmail)
 
 	r.Run()
 }
