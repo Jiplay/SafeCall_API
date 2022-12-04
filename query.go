@@ -14,7 +14,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func AddUser(uri, login, psw, user, userUUID string) bool {
+func AddUser(uri, login, psw, user string) bool {
 	client, err := mongo.NewClient(options.Client().ApplyURI(uri))
 	if err != nil {
 		log.Fatal(err)
@@ -32,7 +32,6 @@ func AddUser(uri, login, psw, user, userUUID string) bool {
 	loginCollection := quickstartDatabase.Collection("loginInfo")
 
 	loginCollection.InsertOne(ctx, bson.D{
-		{Key: "id", Value: userUUID},
 		{Key: "login", Value: login},
 		{Key: "psw", Value: psw},
 		{Key: "data", Value: user},
@@ -40,8 +39,8 @@ func AddUser(uri, login, psw, user, userUUID string) bool {
 	return true
 }
 
-func CreateProfile(uri, login, userUUID string) bool {
-	url := "http://localhost:8081/create/" + login + "/" + userUUID
+func CreateProfile(uri, login string) bool {
+	url := "http://localhost:8081/create/" + login
 
 	client := &http.Client{}
 	req, err := http.NewRequest("POST", url, nil)
@@ -135,6 +134,38 @@ func UpdateProfile(uri, endpoint, userID, data string) bool {
 
 func getProfile(userID string) string {
 	url := "http://localhost:8081/Profile" + "/" + userID
+
+	client := &http.Client{}
+	req, err := http.NewRequest("GET", url, nil)
+
+	if err != nil {
+		fmt.Println(err)
+		return "false"
+	}
+
+	res, err := client.Do(req)
+	if err != nil {
+		fmt.Println(err)
+		return "false"
+	}
+	defer res.Body.Close()
+
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		fmt.Println(err)
+		return "false"
+	}
+
+	var dat map[string]interface{}
+	if err := json.Unmarshal(body, &dat); err != nil {
+		panic(err)
+	}
+
+	return string(body)
+}
+
+func searchNameQuery(username string) string {
+	url := "http://localhost:8081/search" + "/" + username
 
 	client := &http.Client{}
 	req, err := http.NewRequest("GET", url, nil)

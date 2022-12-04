@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/google/uuid"
 	"google.golang.org/protobuf/proto"
@@ -87,11 +88,10 @@ func RegisterHandler(id, psw string) string {
 
 	protoUser := userToProto(id, psw)
 	binary, _ := proto.Marshal(&protoUser)
-	userUUID := genUUID()
-	if AddUser(uri, id, psw, string(binary), userUUID) != true {
+	if AddUser(uri, id, psw, string(binary)) != true {
 		return "Unknown error"
 	}
-	if CreateProfile(uri, id, userUUID) != true {
+	if CreateProfile(uri, id) != true {
 		return "Unknown error"
 	}
 	return "200"
@@ -119,7 +119,26 @@ func postProfileHandler(endpoint, userID, data string) string {
 	return "success"
 }
 
-func getProfileHandler(userID string) {
+func getProfileHandler(userID string) Profile {
 	resp := getProfile(userID)
-	fmt.Println(resp)
+
+	return StringToProfile(resp)
+}
+
+func searchName(userID string) string {
+	resp := searchNameQuery(userID)
+	tmp := 1
+	dest := strings.Split(resp, "\"")
+	result := ""
+
+	a := len(dest) - 2
+	a = a / 4
+
+	for a != 0 {
+		tmp = tmp + 4
+		result = result + "," + dest[tmp]
+		a = a - 1
+	}
+
+	return result[1:]
 }

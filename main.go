@@ -27,6 +27,7 @@ func main() {
 
 	r.GET("/login/:login/:psw", login)
 	r.GET("/profile/:userID", getUserProfile)
+	r.GET("/search/:userID", SearchNameEndpoint)
 
 	r.POST("/register/:login/:psw", register)
 	r.POST("/profileDescription/:userID/:data", postDescription)

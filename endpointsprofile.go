@@ -1,6 +1,8 @@
 package main
 
 import (
+	"strings"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -71,15 +73,18 @@ func postEmail(c *gin.Context) {
 func getUserProfile(c *gin.Context) {
 	userID := c.Param("userID")
 
-	resp := getProfile(userID)
-	if resp != "success" {
-		c.JSON(503, gin.H{
-			"profile": resp,
-		})
-	} else {
-		c.JSON(200, gin.H{
-			"success": "200",
-		})
-	}
+	resp := getProfileHandler(userID)
+	c.JSON(200, gin.H{
+		"profile": resp,
+	})
+}
 
+func SearchNameEndpoint(c *gin.Context) {
+	userID := c.Param("userID")
+
+	resp := searchName(userID)
+	final := strings.Split(resp, ",")
+	c.JSON(200, gin.H{
+		"suggestions": final,
+	})
 }
