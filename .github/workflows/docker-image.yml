@@ -24,4 +24,4 @@ jobs:
       uses: docker/build-push-action@v3
       with:
         push: true
-        tags: ghcr.io/SafeCall-Epitech/api:latest
+        tags: ghcr.io/safeCall-epitech/api:latest
