@@ -2,15 +2,23 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
+	"strings"
 
+	"github.com/google/uuid"
 	"google.golang.org/protobuf/proto"
 )
 
 type Credentials struct {
 	Uri string `json:"uri"`
+}
+
+func genUUID() string {
+	id := uuid.New()
+	return id.String()
 }
 
 // This function will get the uri in the json file to id to the db
@@ -32,17 +40,19 @@ func getCredentials() string {
 	return res.Uri
 }
 
-func LoginHandler(id, psw string) bool {
+func LoginHandler(id, psw string) string {
 	uri := getCredentials()
 	users := GetUsers(uri)
 
 	for _, info := range users {
 		if info["login"] == id && info["psw"] == psw {
-			return true
+			fmt.Println(info["id"])
+			userID := info["id"].(string)
+			return userID
 		}
 	}
 
-	return false
+	return "failed"
 }
 
 func userToProto(username, psw string) UserMessage {
@@ -81,5 +91,54 @@ func RegisterHandler(id, psw string) string {
 	if AddUser(uri, id, psw, string(binary)) != true {
 		return "Unknown error"
 	}
+	if CreateProfile(uri, id) != true {
+		return "Unknown error"
+	}
 	return "200"
+}
+
+func postProfileHandler(endpoint, userID, data string) string {
+	uri := getCredentials()
+	if len(userID) > 45 {
+		return "User ID too long"
+	}
+
+	if endpoint == "FullName" {
+		if len(data) > 30 {
+			return "Full Name too long"
+		}
+	}
+
+	if endpoint == "PhoneNB" {
+		if len(data) > 15 {
+			return "Phone NB too long"
+		}
+	}
+
+	UpdateProfile(uri, endpoint, userID, data)
+	return "success"
+}
+
+func getProfileHandler(userID string) Profile {
+	resp := getProfile(userID)
+
+	return StringToProfile(resp)
+}
+
+func searchName(userID string) string {
+	resp := searchNameQuery(userID)
+	tmp := 1
+	dest := strings.Split(resp, "\"")
+	result := ""
+
+	a := len(dest) - 2
+	a = a / 4
+
+	for a != 0 {
+		tmp = tmp + 4
+		result = result + "," + dest[tmp]
+		a = a - 1
+	}
+
+	return result[1:]
 }

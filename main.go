@@ -26,8 +26,14 @@ func main() {
 	r.Use(CORS())
 
 	r.GET("/login/:login/:psw", login)
+	r.GET("/profile/:userID", getUserProfile)
+	r.GET("/search/:userID", SearchNameEndpoint)
 
 	r.POST("/register/:login/:psw", register)
+	r.POST("/profileDescription/:userID/:data", postDescription)
+	r.POST("/profileFullName/:userID/:data", postFullName)
+	r.POST("/profilePhoneNB/:userID/:data", postPhoneNB)
+	r.POST("/profileEmail/:userID/:data", postEmail)
 
 	r.Run()
 }
@@ -36,13 +42,15 @@ func login(c *gin.Context) {
 	login := c.Param("login")
 	psw := c.Param("psw")
 
-	if LoginHandler(login, psw) != true {
-		c.JSON(200, gin.H{
+	resp := LoginHandler(login, psw)
+
+	if resp == "failed" {
+		c.JSON(404, gin.H{
 			"failed": "404",
 		})
 	} else {
 		c.JSON(200, gin.H{
-			"success": "200",
+			"success": resp,
 		})
 	}
 }
@@ -54,7 +62,7 @@ func register(c *gin.Context) {
 	resp := RegisterHandler(login, psw)
 
 	if resp != "200" {
-		c.JSON(200, gin.H{
+		c.JSON(403, gin.H{
 			"failed": resp,
 		})
 	} else {

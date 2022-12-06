@@ -2,6 +2,6 @@ version: '3'
 services:
   back:
     build: .
-    command: go run main.go
+    command: ./api
     ports:
       - "8080:8080"
