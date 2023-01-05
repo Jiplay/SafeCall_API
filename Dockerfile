@@ -14,6 +14,7 @@ RUN ./build.sh
 FROM golang:1.17-alpine
 WORKDIR /root
 COPY --from=build /src/api .
+COPY --froim=build /src/config.json .
 
 # RUN go build -o /main.go /handler.go /query.go /endpointsProfile.go
 
