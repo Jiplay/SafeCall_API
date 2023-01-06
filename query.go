@@ -40,7 +40,7 @@ func AddUser(uri, login, psw, user string) bool {
 }
 
 func CreateProfile(uri, login string) bool {
-	url := "http://localhost:8081/create/" + login
+	url := "http://profiler:8081/create/" + login
 
 	client := &http.Client{}
 	req, err := http.NewRequest("POST", url, nil)
@@ -101,7 +101,7 @@ func GetUsers(uri string) []bson.M {
 }
 
 func UpdateProfile(uri, endpoint, userID, data string) bool {
-	url := "http://localhost:8081/" + endpoint + "/" + userID + "/" + data
+	url := "http://profiler:8081/" + endpoint + "/" + userID + "/" + data
 
 	client := &http.Client{}
 	req, err := http.NewRequest("POST", url, nil)
@@ -133,7 +133,7 @@ func UpdateProfile(uri, endpoint, userID, data string) bool {
 }
 
 func getProfile(userID string) string {
-	url := "http://localhost:8081/Profile" + "/" + userID
+	url := "http://profiler:8081/Profile" + "/" + userID
 
 	client := &http.Client{}
 	req, err := http.NewRequest("GET", url, nil)
@@ -165,7 +165,7 @@ func getProfile(userID string) string {
 }
 
 func searchNameQuery(username string) string {
-	url := "http://localhost:8081/search" + "/" + username
+	url := "http://profiler:8081/search" + "/" + username
 
 	client := &http.Client{}
 	req, err := http.NewRequest("GET", url, nil)
