@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -46,8 +45,7 @@ func LoginHandler(id, psw string) string {
 
 	for _, info := range users {
 		if info["login"] == id && info["psw"] == psw {
-			fmt.Println(info["id"])
-			userID := info["id"].(string)
+			userID := info["login"].(string)
 			return userID
 		}
 	}
@@ -89,10 +87,10 @@ func RegisterHandler(id, psw string) string {
 	protoUser := userToProto(id, psw)
 	binary, _ := proto.Marshal(&protoUser)
 	if AddUser(uri, id, psw, string(binary)) != true {
-		return "Unknown error"
+		return "Unknown error while registration"
 	}
 	if CreateProfile(uri, id) != true {
-		return "Unknown error"
+		return "Unknown error while profile creation"
 	}
 	return "200"
 }
