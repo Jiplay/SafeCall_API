@@ -35,6 +35,8 @@ func main() {
 	r.POST("/profilePhoneNB/:userID/:data", postPhoneNB)
 	r.POST("/profileEmail/:userID/:data", postEmail)
 
+	r.POST("/tryCall", sendCall)
+
 	r.Run()
 }
 

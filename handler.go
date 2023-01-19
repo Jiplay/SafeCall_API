@@ -2,12 +2,14 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
 	"strings"
 
 	"github.com/google/uuid"
+	zmq "github.com/pebbe/zmq4"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -66,7 +68,7 @@ func userToProto(username, psw string) UserMessage {
 	return user
 }
 
-func RegisterHandler(id, psw string) string {
+func RegisterHandler(id, psw string) string { // TODO Ajouter un call au service de messagerie
 	uri := getCredentials()
 	users := GetUsers(uri)
 
@@ -139,4 +141,25 @@ func searchName(userID string) string {
 	}
 
 	return result[1:]
+}
+
+func sendCallService(senter, dest string) bool {
+	//  Socket to talk to server
+	fmt.Println("Connecting to hello world server...")
+	requester, _ := zmq.NewSocket(zmq.PAIR)
+	defer requester.Close()
+	requester.Connect("tcp://profiler:5555")
+
+	for request_nbr := 0; request_nbr != 10; request_nbr++ {
+		// send hello
+		msg := fmt.Sprintf("Hello %d", request_nbr)
+		fmt.Println("Sending ", msg)
+		requester.Send(msg, 0)
+
+		// Wait for reply:
+		reply, _ := requester.Recv(0)
+		fmt.Println("Received ", reply)
+	}
+
+	return true
 }
