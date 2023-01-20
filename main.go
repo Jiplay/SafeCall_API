@@ -35,10 +35,23 @@ func main() {
 	r.POST("/profilePhoneNB/:userID/:data", postPhoneNB)
 	r.POST("/profileEmail/:userID/:data", postEmail)
 
-	r.GET("/tryCall", sendCall)
+	// r.GET("/tryCall", sendCall)
 
 	r.Run()
 }
+
+// import "github.com/gin-gonic/gin"
+
+// func sendCall(c *gin.Context) {
+// 	a := c.Param("userID")
+// 	b := c.Param("dest")
+
+// 	resp := sendCallService(a, b)
+
+// 	c.JSON(200, gin.H{
+// 		"success": resp,
+// 	})
+// }
 
 func login(c *gin.Context) {
 	login := c.Param("login")
