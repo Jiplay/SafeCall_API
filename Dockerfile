@@ -16,8 +16,6 @@ WORKDIR /root
 COPY --from=build /src/api .
 COPY --from=build /src/config.json .
 
-RUN go build -o /main.go /handler.go /query.go /endpointsProfile.go
-
 EXPOSE 8080
 
 CMD [ "./api" ]
