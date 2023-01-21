@@ -11,10 +11,10 @@ RUN export GO111MODULE="on"
 COPY . .
 RUN ./build.sh
 
-FROM golang:1.17-alpine
-WORKDIR /root
-COPY --from=build /src/api .
-COPY --from=build /src/config.json .
+# FROM golang:1.17-alpine
+# WORKDIR /root
+# COPY --from=build /src/api .
+# COPY --from=build /src/config.json .
 
 EXPOSE 8080
 
