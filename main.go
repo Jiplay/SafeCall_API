@@ -29,7 +29,7 @@ func main() {
 	r.GET("/profile/:userID", getUserProfile)
 	r.GET("/search/:userID", SearchNameEndpoint)
 
-	r.POST("/register/:login/:psw", register)
+	r.POST("/register/:login/:psw/:email", register)
 	r.POST("/profileDescription/:userID/:data", postDescription)
 	r.POST("/profileFullName/:userID/:data", postFullName)
 	r.POST("/profilePhoneNB/:userID/:data", postPhoneNB)
@@ -60,8 +60,9 @@ func login(c *gin.Context) {
 func register(c *gin.Context) {
 	login := c.Param("login")
 	psw := c.Param("psw")
+	email := c.Param("email")
 
-	resp := RegisterHandler(login, psw)
+	resp := RegisterHandler(login, psw, email)
 
 	if resp != "200" {
 		c.JSON(403, gin.H{

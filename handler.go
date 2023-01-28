@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"regexp"
 	"strings"
 
 	"github.com/google/uuid"
@@ -68,16 +69,19 @@ func userToProto(username, psw string) UserMessage {
 	return user
 }
 
-func RegisterHandler(id, psw string) string { // TODO Ajouter un call au service de messagerie
+func RegisterHandler(id, psw, email string) string { // TODO Ajouter un call au service de messagerie
 	uri := getCredentials()
 	users := GetUsers(uri)
 
+	re := regexp.MustCompile(`^[a-zA-Z0-9.!#$%&'*+/=?^_` + "`" + `{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$`)
+	wellFormatedEmail := re.FindString(email)
+
 	if len(id) < 5 {
 		return "id too short" // Id too short
-	}
-
-	if len(psw) < 7 {
+	} else if len(psw) < 7 {
 		return "password too short" // password too short
+	} else if len(wellFormatedEmail) < 5 {
+		return "Bad formated email"
 	}
 
 	for _, info := range users {
@@ -88,11 +92,11 @@ func RegisterHandler(id, psw string) string { // TODO Ajouter un call au service
 
 	protoUser := userToProto(id, psw)
 	binary, _ := proto.Marshal(&protoUser)
-	if AddUser(uri, id, psw, string(binary)) != true {
-		return "Unknown error while registration"
-	}
-	if CreateProfile(uri, id) != true {
+	if !CreateProfile(uri, id, wellFormatedEmail) {
 		return "Unknown error while profile creation"
+	}
+	if !AddUser(uri, id, psw, string(binary)) {
+		return "Unknown error while registration"
 	}
 	return "200"
 }
