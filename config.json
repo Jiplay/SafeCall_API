@@ -1,3 +1,4 @@
 {
-    "uri": "mongodb+srv://Test:7TLjJuHQRqSowKHE@safecall.n9jr0.mongodb.net/?retryWrites=true&w=majority"
+    "uri": "mongodb+srv://Test:7TLjJuHQRqSowKHE@safecall.n9jr0.mongodb.net/?retryWrites=true&w=majority",
+    "appPassword": "kpnymlaufoqksrbj"
 }

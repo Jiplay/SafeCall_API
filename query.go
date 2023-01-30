@@ -14,7 +14,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func AddUser(uri, login, psw, user string) bool {
+func AddUser(uri, login, psw, user, email string) bool {
 	client, err := mongo.NewClient(options.Client().ApplyURI(uri))
 	if err != nil {
 		log.Fatal(err)
@@ -33,14 +33,16 @@ func AddUser(uri, login, psw, user string) bool {
 
 	loginCollection.InsertOne(ctx, bson.D{
 		{Key: "login", Value: login},
+		{Key: "email", Value: email},
 		{Key: "psw", Value: psw},
+		{Key: "code", Value: ""},
 		{Key: "data", Value: user},
 	})
 	return true
 }
 
 func CreateProfile(uri, login, email string) bool {
-	url := "http://profiler:8081/create/" + login + "/" + email
+	url := "http://localhost:8081/create/" + login + "/" + email
 
 	client := &http.Client{}
 	req, err := http.NewRequest("POST", url, nil)
@@ -71,7 +73,7 @@ func CreateProfile(uri, login, email string) bool {
 	return true
 }
 
-func GetUsers(uri string) []bson.M {
+func GetUsers(uri, database string) []bson.M {
 	client, err := mongo.NewClient(options.Client().ApplyURI(uri))
 	if err != nil {
 		log.Fatal(err)
@@ -86,7 +88,7 @@ func GetUsers(uri string) []bson.M {
 	defer client.Disconnect(ctx)
 
 	quickstartDatabase := client.Database("userData")
-	loginCollection := quickstartDatabase.Collection("loginInfo")
+	loginCollection := quickstartDatabase.Collection(database)
 
 	cursor, err := loginCollection.Find(ctx, bson.M{})
 	if err != nil {
@@ -194,4 +196,41 @@ func searchNameQuery(username string) string {
 	}
 
 	return string(body)
+}
+
+func editLoginInfo(uri, finder, new string, endpoint int) bool {
+	src := ""
+	dest := ""
+	if endpoint == Password {
+		src = "login"
+		dest = "psw"
+	} else if endpoint == Login {
+		src = "email"
+		dest = "code"
+	} else if endpoint == Reset {
+		src = "email"
+		dest = "psw"
+	}
+
+	client, err := mongo.NewClient(options.Client().ApplyURI(uri))
+	if err != nil {
+		log.Fatal(err)
+		return false
+	}
+	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	err = client.Connect(ctx)
+	if err != nil {
+		log.Fatal(err)
+		return false
+	}
+	defer client.Disconnect(ctx)
+
+	quickstartDatabase := client.Database("userData")
+	ProfileCollection := quickstartDatabase.Collection("loginInfo")
+
+	filter := bson.D{{Key: src, Value: finder}}
+	update := bson.D{{Key: "$set", Value: bson.D{{Key: dest, Value: new}}}}
+	_, err = ProfileCollection.UpdateOne(ctx, filter, update)
+
+	return err == nil
 }

@@ -8,6 +8,7 @@ import (
 	"os"
 	"regexp"
 	"strings"
+	"unicode"
 
 	"github.com/google/uuid"
 	zmq "github.com/pebbe/zmq4"
@@ -15,8 +16,16 @@ import (
 )
 
 type Credentials struct {
-	Uri string `json:"uri"`
+	Uri         string `json:"uri"`
+	AppPassword string `json:"appPassword"`
 }
+
+const (
+	Login      int = 0
+	Password   int = 1
+	Reset      int = 2
+	DeleteCode int = 3
+)
 
 func genUUID() string {
 	id := uuid.New()
@@ -24,12 +33,12 @@ func genUUID() string {
 }
 
 // This function will get the uri in the json file to id to the db
-func getCredentials() string {
+func getCredentials() Credentials {
 	fileContent, err := os.Open("config.json")
 
 	if err != nil {
 		log.Fatal(err)
-		return ""
+		return Credentials{}
 	}
 
 	defer fileContent.Close()
@@ -39,12 +48,12 @@ func getCredentials() string {
 	res := Credentials{}
 	json.Unmarshal([]byte(byteResult), &res)
 
-	return res.Uri
+	return res
 }
 
 func LoginHandler(id, psw string) string {
-	uri := getCredentials()
-	users := GetUsers(uri)
+	cred := getCredentials()
+	users := GetUsers(cred.Uri, "loginInfo")
 
 	for _, info := range users {
 		if info["login"] == id && info["psw"] == psw {
@@ -70,16 +79,26 @@ func userToProto(username, psw string) UserMessage {
 }
 
 func RegisterHandler(id, psw, email string) string { // TODO Ajouter un call au service de messagerie
-	uri := getCredentials()
-	users := GetUsers(uri)
+	cred := getCredentials()
+	users := GetUsers(cred.Uri, "loginInfo")
 
 	re := regexp.MustCompile(`^[a-zA-Z0-9.!#$%&'*+/=?^_` + "`" + `{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$`)
 	wellFormatedEmail := re.FindString(email)
 
+	nb, up, sp, le := verifyPassword(psw)
+
+	if !nb {
+		return "Your password must contains at least 1 digit"
+	} else if !up {
+		return "Your password must contains at least 1 uppercase"
+	} else if !sp {
+		return "Your password must contains at least 1 special character"
+	} else if !le {
+		return "Your password must contains at least 8 characters"
+	}
+
 	if len(id) < 5 {
 		return "id too short" // Id too short
-	} else if len(psw) < 7 {
-		return "password too short" // password too short
 	} else if len(wellFormatedEmail) < 5 {
 		return "Bad formated email"
 	}
@@ -87,22 +106,24 @@ func RegisterHandler(id, psw, email string) string { // TODO Ajouter un call au 
 	for _, info := range users {
 		if info["login"] == id {
 			return "Id already taken" // Id already taken
+		} else if info["email"] == wellFormatedEmail {
+			return "email address already used"
 		}
 	}
 
 	protoUser := userToProto(id, psw)
 	binary, _ := proto.Marshal(&protoUser)
-	if !CreateProfile(uri, id, wellFormatedEmail) {
+	if !CreateProfile(cred.Uri, id, wellFormatedEmail) {
 		return "Unknown error while profile creation"
 	}
-	if !AddUser(uri, id, psw, string(binary)) {
+	if !AddUser(cred.Uri, id, psw, string(binary), wellFormatedEmail) {
 		return "Unknown error while registration"
 	}
 	return "200"
 }
 
 func postProfileHandler(endpoint, userID, data string) string {
-	uri := getCredentials()
+	cred := getCredentials()
 	if len(userID) > 45 {
 		return "User ID too long"
 	}
@@ -119,7 +140,7 @@ func postProfileHandler(endpoint, userID, data string) string {
 		}
 	}
 
-	UpdateProfile(uri, endpoint, userID, data)
+	UpdateProfile(cred.Uri, endpoint, userID, data)
 	return "success"
 }
 
@@ -166,4 +187,104 @@ func sendCallService(senter, dest string) bool {
 	}
 
 	return true
+}
+
+func PasswordHandler(login, old, new string) string {
+	cred := getCredentials()
+	users := GetUsers(cred.Uri, "loginInfo")
+
+	nb, up, sp, le := verifyPassword(new)
+
+	if !nb {
+		return "Your password must contains at least 1 digit"
+	} else if !up {
+		return "Your password must contains at least 1 uppercase"
+	} else if !sp {
+		return "Your password must contains at least 1 special character"
+	} else if !le {
+		return "Your password must contains at least 8 characters"
+	}
+
+	for _, info := range users {
+		if info["login"] == login && info["psw"] == old {
+			err := editLoginInfo(cred.Uri, login, new, Password)
+			if !err {
+				return "network error"
+			}
+			return "200"
+		}
+	}
+	return "user not found"
+}
+
+func verifyPassword(s string) (number, upper, special, length bool) {
+	for _, c := range s {
+		switch {
+		case unicode.IsNumber(c):
+			number = true
+		case unicode.IsUpper(c):
+			upper = true
+		case unicode.IsPunct(c) || unicode.IsSymbol(c):
+			special = true
+		default:
+			//return false, false, false, false
+		}
+	}
+	length = len(s) >= 7
+
+	return
+}
+
+func ForgetPasswordHandler(email string) string {
+	cred := getCredentials()
+	users := GetUsers(cred.Uri, "loginInfo")
+
+	for _, info := range users {
+		fmt.Println(info["email"], "David")
+		if info["email"] == email {
+			code := codeGenerator()
+			editLoginInfo(cred.Uri, email, code, Login)
+			sendMail(cred.AppPassword, email, code)
+			return "200"
+		}
+	}
+	return "ko"
+}
+
+func checkCodeHandler(email, code string) bool {
+	cred := getCredentials()
+	users := GetUsers(cred.Uri, "loginInfo")
+
+	for _, info := range users {
+		if info["email"] == email && info["code"] == code {
+			return true
+		}
+	}
+	return false
+}
+
+func setPasswordHandler(email, password string) string {
+	cred := getCredentials()
+	nb, up, sp, le := verifyPassword(password)
+
+	if !nb {
+		return "Your password must contains at least 1 digit"
+	} else if !up {
+		return "Your password must contains at least 1 uppercase"
+	} else if !sp {
+		return "Your password must contains at least 1 special character"
+	} else if !le {
+		return "Your password must contains at least 8 characters"
+	}
+
+	err := editLoginInfo(cred.Uri, email, password, Reset)
+
+	if !err {
+		return "error"
+	}
+	err = editLoginInfo(cred.Uri, email, "", Login)
+	if !err {
+		return "error"
+	}
+	return "200"
 }

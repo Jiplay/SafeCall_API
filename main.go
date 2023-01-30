@@ -23,11 +23,16 @@ func CORS() gin.HandlerFunc {
 
 func main() {
 	r := gin.Default()
-	r.Use(CORS())
+	// r.Use(CORS())
 
 	r.GET("/login/:login/:psw", login)
 	r.GET("/profile/:userID", getUserProfile)
 	r.GET("/search/:userID", SearchNameEndpoint)
+
+	r.POST("/editPassword/:userID/:old/:new", editPswEndpoint)
+	r.POST("/setPassword/:email/:new", setPswEndpoint)
+	r.POST("/forgetPassword/:email", forgetPassword)
+	r.POST("/forgetPassword/:email/:code", checkcode)
 
 	r.POST("/register/:login/:psw/:email", register)
 	r.POST("/profileDescription/:userID/:data", postDescription)
@@ -63,6 +68,74 @@ func register(c *gin.Context) {
 	email := c.Param("email")
 
 	resp := RegisterHandler(login, psw, email)
+
+	if resp != "200" {
+		c.JSON(403, gin.H{
+			"failed": resp,
+		})
+	} else {
+		c.JSON(200, gin.H{
+			"success": "200",
+		})
+	}
+}
+
+func editPswEndpoint(c *gin.Context) {
+	login := c.Param("userID")
+	old := c.Param("old")
+	new := c.Param("new")
+
+	resp := PasswordHandler(login, old, new)
+
+	if resp != "200" {
+		c.JSON(403, gin.H{
+			"failed": resp,
+		})
+	} else {
+		c.JSON(200, gin.H{
+			"success": "200",
+		})
+	}
+}
+
+func forgetPassword(c *gin.Context) {
+	email := c.Param("email")
+
+	resp := ForgetPasswordHandler(email)
+
+	if resp != "200" {
+		c.JSON(403, gin.H{
+			"failed": resp,
+		})
+	} else {
+		c.JSON(200, gin.H{
+			"success": "200",
+		})
+	}
+}
+
+func checkcode(c *gin.Context) {
+	email := c.Param("email")
+	code := c.Param("code")
+
+	resp := checkCodeHandler(email, code)
+
+	if !resp {
+		c.JSON(403, gin.H{
+			"failed": "404",
+		})
+	} else {
+		c.JSON(200, gin.H{
+			"success": "200",
+		})
+	}
+}
+
+func setPswEndpoint(c *gin.Context) {
+	email := c.Param("email")
+	password := c.Param("new")
+
+	resp := setPasswordHandler(email, password)
 
 	if resp != "200" {
 		c.JSON(403, gin.H{
