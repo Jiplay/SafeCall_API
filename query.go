@@ -42,7 +42,7 @@ func AddUser(uri, login, psw, user, email string) bool {
 }
 
 func CreateProfile(uri, login, email string) bool {
-	url := "http://localhost:8081/create/" + login + "/" + email
+	url := "http://profiler:8081/create/" + login + "/" + email
 
 	client := &http.Client{}
 	req, err := http.NewRequest("POST", url, nil)

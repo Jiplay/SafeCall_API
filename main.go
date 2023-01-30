@@ -29,10 +29,10 @@ func main() {
 	r.GET("/profile/:userID", getUserProfile)
 	r.GET("/search/:userID", SearchNameEndpoint)
 
-	r.POST("/editPassword/:userID/:old/:new", editPswEndpoint)
-	r.POST("/setPassword/:email/:new", setPswEndpoint)
 	r.POST("/forgetPassword/:email", forgetPassword)
 	r.POST("/forgetPassword/:email/:code", checkcode)
+	r.POST("/setPassword/:email/:new", setPswEndpoint)
+	r.POST("/editPassword/:userID/:old/:new", editPswEndpoint)
 
 	r.POST("/register/:login/:psw/:email", register)
 	r.POST("/profileDescription/:userID/:data", postDescription)
