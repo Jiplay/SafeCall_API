@@ -40,6 +40,10 @@ func main() {
 	r.POST("/profilePhoneNB/:userID/:data", postPhoneNB)
 	r.POST("/profileEmail/:userID/:data", postEmail)
 
+	r.POST("/manageFriend/:userID/:friend/:action", manageFriendEndpoint)
+	r.POST("/replyFriend/:userID/:friend/:resp", replyFriendEndpoint)
+	r.GET("/listFriends/:userID", listFriends)
+
 	r.GET("/tryCall", sendCall)
 
 	r.Run()

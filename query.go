@@ -41,9 +41,7 @@ func AddUser(uri, login, psw, user, email string) bool {
 	return true
 }
 
-func CreateProfile(uri, login, email string) bool {
-	url := "http://profiler:8081/create/" + login + "/" + email
-
+func ProfilerRequest(uri, url string) bool {
 	client := &http.Client{}
 	req, err := http.NewRequest("POST", url, nil)
 
@@ -196,6 +194,10 @@ func searchNameQuery(username string) string {
 	}
 
 	return string(body)
+}
+
+func actionFriend(me, dest, action string) {
+
 }
 
 func editLoginInfo(uri, finder, new string, endpoint int) bool {

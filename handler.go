@@ -112,7 +112,8 @@ func RegisterHandler(id, psw, email string) string { // TODO Ajouter un call au 
 
 	protoUser := userToProto(id, psw)
 	binary, _ := proto.Marshal(&protoUser)
-	if !CreateProfile(cred.Uri, id, wellFormatedEmail) {
+	url := "http://profiler:8081/create/" + id + "/" + wellFormatedEmail
+	if !ProfilerRequest(cred.Uri, url) {
 		return "Unknown error while profile creation"
 	}
 	if !AddUser(cred.Uri, id, psw, string(binary), wellFormatedEmail) {
@@ -138,8 +139,8 @@ func postProfileHandler(endpoint, userID, data string) string {
 			return "Phone NB too long"
 		}
 	}
-
-	UpdateProfile(cred.Uri, endpoint, userID, data)
+	url := "http://profiler:8081/" + endpoint + "/" + userID + "/" + data
+	ProfilerRequest(cred.Uri, url)
 	return "success"
 }
 

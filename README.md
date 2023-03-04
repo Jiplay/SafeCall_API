@@ -26,6 +26,29 @@ Si des modifications sont effectués il faut rajouter le flag `--build`
 Ensure compiler version is 3+
 
 
+### Password Endpoints
+Chaque mot de passe doit remplir ces conditions : 
+
+* At least one lowercase letter ((?=.*[a-z]))
+* At least one uppercase letter ((?=.*[A-Z]))
+* At least one digit ((?=.*[0-9]))
+* At least one special character ((?=.*[!@#$%^&*]))
+* At least 8 characters in total ((?=.{8,}))
+
+* /forgetPassword/:email -> 
+Ou l'email du compte est attendu, si il la trouve ça va lui envoyer un mail avec un code que
+l'utilisateur va devoir renseigné pour prouvé que c'est bien son compte.
+
+* /forgetPassword/:email/:code -> 
+L'endpoint qui vérifie si le code renseigné est bien celui envoyé par mail par le précédent endpoint
+
+* /setPassword/:email/:new ->
+Cet endpoint permet, après vérification du code de changer le mot de passe.
+
+* /editPassword/:userID/:old/:new ->
+Manière classique de mettre à jour son mot de passe quand on connait son ancien mot de passe
+
+
 
 # Errors 
 
