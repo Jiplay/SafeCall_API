@@ -1,14 +1,19 @@
 package main
 
-import "github.com/gin-gonic/gin"
+import (
+	"fmt"
+
+	"github.com/gin-gonic/gin"
+)
 
 func manageFriendEndpoint(c *gin.Context) {
 	userID := c.Param("userID")
 	friend := c.Param("friend")
 	action := c.Param("action")
+	url := fmt.Sprintf("http://localhost:8081/friend/%s/%s/%s", userID, friend, action)
 
-	resp := actionFriendHandler(userID, friend, action)
-	if resp != "success" {
+	resp := actionFriendHandler(url)
+	if !resp {
 		c.JSON(503, gin.H{
 			"failed": resp,
 		})
@@ -21,10 +26,13 @@ func manageFriendEndpoint(c *gin.Context) {
 
 func replyFriendEndpoint(c *gin.Context) {
 	userID := c.Param("userID")
-	description := c.Param("data")
+	friend := c.Param("friend")
+	action := c.Param("action")
 
-	resp := postProfileHandler("description", userID, description)
-	if resp != "success" {
+	url := fmt.Sprintf("http://localhost:8081/friendRequest/%s/%s/%s", userID, friend, action)
+
+	resp := actionFriendHandler(url)
+	if !resp {
 		c.JSON(503, gin.H{
 			"failed": resp,
 		})
@@ -36,5 +44,16 @@ func replyFriendEndpoint(c *gin.Context) {
 }
 
 func listFriends(c *gin.Context) {
+	userID := c.Param("userID")
+	resp := getFriends(userID)
 
+	if resp != "success" {
+		c.JSON(503, gin.H{
+			"failed": resp,
+		})
+	} else {
+		c.JSON(200, gin.H{
+			"success": resp,
+		})
+	}
 }

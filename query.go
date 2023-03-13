@@ -41,7 +41,7 @@ func AddUser(uri, login, psw, user, email string) bool {
 	return true
 }
 
-func ProfilerRequest(uri, url string) bool {
+func ProfilerRequest(url string) bool {
 	client := &http.Client{}
 	req, err := http.NewRequest("POST", url, nil)
 
@@ -235,4 +235,34 @@ func editLoginInfo(uri, finder, new string, endpoint int) bool {
 	_, err = ProfileCollection.UpdateOne(ctx, filter, update)
 
 	return err == nil
+}
+
+func getDataProfiler(userID, url string) string {
+	client := &http.Client{}
+	req, err := http.NewRequest("GET", url, nil)
+
+	if err != nil {
+		fmt.Println(err)
+		return "false"
+	}
+
+	res, err := client.Do(req)
+	if err != nil {
+		fmt.Println(err)
+		return "false"
+	}
+	defer res.Body.Close()
+
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		fmt.Println(err)
+		return "false"
+	}
+
+	var dat map[string]interface{}
+	if err := json.Unmarshal(body, &dat); err != nil {
+		panic(err)
+	}
+
+	return string(body)
 }

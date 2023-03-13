@@ -41,7 +41,7 @@ func main() {
 	r.POST("/profileEmail/:userID/:data", postEmail)
 
 	r.POST("/manageFriend/:userID/:friend/:action", manageFriendEndpoint)
-	r.POST("/replyFriend/:userID/:friend/:resp", replyFriendEndpoint)
+	r.POST("/replyFriend/:userID/:friend/:action", replyFriendEndpoint)
 	r.GET("/listFriends/:userID", listFriends)
 
 	r.GET("/tryCall", sendCall)
