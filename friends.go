@@ -47,13 +47,7 @@ func listFriends(c *gin.Context) {
 	userID := c.Param("userID")
 	resp := getFriends(userID)
 
-	if resp != "success" {
-		c.JSON(503, gin.H{
-			"failed": resp,
-		})
-	} else {
-		c.JSON(200, gin.H{
-			"success": resp,
-		})
-	}
+	c.JSON(200, gin.H{
+		"fetched": resp,
+	})
 }
