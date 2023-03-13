@@ -10,7 +10,7 @@ func manageFriendEndpoint(c *gin.Context) {
 	userID := c.Param("userID")
 	friend := c.Param("friend")
 	action := c.Param("action")
-	url := fmt.Sprintf("http://localhost:8081/friend/%s/%s/%s", userID, friend, action)
+	url := fmt.Sprintf("http://profiler:8081/friend/%s/%s/%s", userID, friend, action)
 
 	resp := actionFriendHandler(url)
 	if !resp {
@@ -29,7 +29,7 @@ func replyFriendEndpoint(c *gin.Context) {
 	friend := c.Param("friend")
 	action := c.Param("action")
 
-	url := fmt.Sprintf("http://localhost:8081/friendRequest/%s/%s/%s", userID, friend, action)
+	url := fmt.Sprintf("http://profiler:8081/friendRequest/%s/%s/%s", userID, friend, action)
 
 	resp := actionFriendHandler(url)
 	if !resp {
