@@ -39,6 +39,7 @@ func main() {
 	r.POST("/profileFullName/:userID/:data", postFullName)
 	r.POST("/profilePhoneNB/:userID/:data", postPhoneNB)
 	r.POST("/profileEmail/:userID/:data", postEmail)
+	r.POST("/delete/:userID", deleteUser)
 
 	r.POST("/manageFriend/:userID/:friend/:action", manageFriendEndpoint)
 	r.POST("/replyFriend/:userID/:friend/:action", replyFriendEndpoint)
@@ -150,4 +151,13 @@ func setPswEndpoint(c *gin.Context) {
 			"success": "200",
 		})
 	}
+}
+
+func deleteUser(c *gin.Context) {
+	userID := c.Param("userID")
+	resp := deleteUserData(userID)
+
+	c.JSON(200, gin.H{
+		"Success ": resp,
+	})
 }

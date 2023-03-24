@@ -187,3 +187,8 @@ func sendCallService(senter, dest string) bool {
 
 	return true
 }
+
+func deleteUserData(userID string) string {
+	ProfilerRequest("http://profiler:8081/delete/" + userID)
+	return "success"
+}
