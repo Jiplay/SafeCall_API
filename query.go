@@ -14,6 +14,13 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+type Event struct {
+	Guests    string `bson:"Guests"`
+	Date      string `bson:"Date"`
+	Subject   string `bson:"Subject"`
+	Confirmed bool   `bson:"Confirmed"`
+}
+
 func AddUser(uri, login, psw, user, email string) bool {
 	client, err := mongo.NewClient(options.Client().ApplyURI(uri))
 	if err != nil {
@@ -265,4 +272,36 @@ func getDataProfiler(userID, url string) string {
 	}
 
 	return string(body)
+}
+
+func postDataProfiler(url string) string {
+	client := &http.Client{}
+	req, err := http.NewRequest("POST", url, nil)
+
+	if err != nil {
+		fmt.Println(err)
+		return "false"
+	}
+
+	res, err := client.Do(req)
+	if err != nil {
+		fmt.Println(err)
+		return "false"
+	}
+	defer res.Body.Close()
+
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		fmt.Println(err)
+		return "false"
+	}
+
+	var dat map[string]interface{}
+	if err := json.Unmarshal(body, &dat); err != nil {
+		panic(err)
+	}
+	fmt.Println(body)
+
+	return string(body)
+
 }

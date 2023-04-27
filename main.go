@@ -45,6 +45,10 @@ func main() {
 	r.POST("/replyFriend/:userID/:friend/:action", replyFriendEndpoint)
 	r.GET("/listFriends/:userID", listFriends)
 
+	r.POST("/addEvent/:guest1/:guest2/:date/:subject", addEventEndpoint)
+	r.POST("/delEvent/:guest1/:guest2/:date", delEventEndpoint)
+	r.GET("/listEvent/:userID", listEventEndpoint)
+
 	r.GET("/tryCall", sendCall)
 
 	r.Run()
@@ -159,5 +163,40 @@ func deleteUser(c *gin.Context) {
 
 	c.JSON(200, gin.H{
 		"Success ": resp,
+	})
+}
+
+func addEventEndpoint(c *gin.Context) {
+	guest1 := c.Param("guest1")
+	guest2 := c.Param("guest2")
+	subject := c.Param("subject")
+	date := c.Param("date")
+
+	resp := addEventHandler(guest1, guest2, subject, date)
+
+	c.JSON(200, gin.H{
+		"Success ": resp,
+	})
+}
+
+func delEventEndpoint(c *gin.Context) {
+	guest1 := c.Param("guest1")
+	guest2 := c.Param("guest2")
+	date := c.Param("date")
+
+	resp := delEventHandler(guest1, guest2, date)
+
+	c.JSON(200, gin.H{
+		"Success ": resp,
+	})
+}
+
+func listEventEndpoint(c *gin.Context) {
+	user := c.Param("userID")
+
+	a := listEventHandler(user)
+
+	c.JSON(200, gin.H{
+		"Success ": a,
 	})
 }
