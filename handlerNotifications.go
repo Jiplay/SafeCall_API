@@ -6,7 +6,7 @@ import (
 
 func GetNotification(userID string) string {
 	url := "http://profiler:8081/notification/" + userID
-	res := postDataProfiler(url)
+	res := getDataProfiler(userID, url)
 	return res
 }
 
@@ -17,7 +17,7 @@ func addNotificationHandler(UserID, Title, Content string, Status bool) string {
 }
 
 func delNotificationHandler(UserID, Title string) string {
-	url := "http://profiler:8081/notification/:UserID/" + UserID + "/" + Title
+	url := "http://profiler:8081/notification/" + UserID + "/" + Title
 	res := postDataProfiler(url)
 	return res
 }
