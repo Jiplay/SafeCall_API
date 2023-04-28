@@ -5,7 +5,6 @@ import (
 )
 
 func actionFriendHandler(url string) bool {
-	// url := fmt.Sprintf("http://localhost:8081/friend/%s/%s/%s", me, dest, action)
 	resp := ProfilerRequest(url)
 	return resp
 }

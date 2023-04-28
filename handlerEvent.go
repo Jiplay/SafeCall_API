@@ -6,7 +6,7 @@ import (
 )
 
 func addEventHandler(guest1, guest2, subject, date string) string {
-	url := "http://profiler:8081/addEvent/" + guest1 + "/" + guest2 + "/" + subject + "/" + date
+	url := "http://profiler:8081/addEvent/" + guest1 + "/" + guest2 + "/" + date + "/" + subject
 	res := postDataProfiler(url)
 
 	return res
@@ -19,7 +19,7 @@ func delEventHandler(guest1, guest2, date string) string {
 }
 
 func listEventHandler(userID string) []Event {
-	resp := getDataProfiler(userID, "http://profielr:8081/listEvent/"+userID)
+	resp := getDataProfiler(userID, "http://profiler:8081/listEvent/"+userID)
 	var events []Event
 	err := json.Unmarshal([]byte(resp[12:len(resp)-1]), &events)
 	if err != nil {

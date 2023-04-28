@@ -300,7 +300,6 @@ func postDataProfiler(url string) string {
 	if err := json.Unmarshal(body, &dat); err != nil {
 		panic(err)
 	}
-	fmt.Println(body)
 
 	return string(body)
 
