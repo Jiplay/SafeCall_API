@@ -1,6 +1,7 @@
 package main
 
 import (
+	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -21,6 +22,12 @@ func CORS() gin.HandlerFunc {
 
 		c.Next()
 	}
+}
+
+type PostMessageStruct struct {
+	User    string `bson:"User"`
+	Dest    string `bson:"Dest"`
+	Message string `bson:"Message"`
 }
 
 func main() {
@@ -54,6 +61,10 @@ func main() {
 	r.POST("/notification/:UserID/:Title/:Content/:Status", addNotificationEndpoint)
 	r.POST("/notification/:UserID/:Title", delNotificationEndpoint)
 	r.GET("/notification/:UserID", GetUserNotification)
+
+	r.GET("/conversations/:UserID", GetConversations)
+	r.GET("/messages/:UserID/:FriendID", GetMessages)
+	r.POST("/sendMessage", PostMessage)
 
 	r.GET("/tryCall", sendCall)
 
@@ -245,5 +256,38 @@ func delNotificationEndpoint(c *gin.Context) {
 
 	c.JSON(200, gin.H{
 		"Success ": resp,
+	})
+}
+
+func GetConversations(c *gin.Context) {
+	userID := c.Param("UserID")
+	resp := GetConversation(userID)
+
+	c.JSON(200, gin.H{
+		"Success ": resp,
+	})
+}
+
+func GetMessages(c *gin.Context) {
+	userID := c.Param("UserID")
+	friendID := c.Param("FriendID")
+	resp := GetMessagesHandler(userID, friendID)
+
+	c.JSON(200, gin.H{
+		"Success ": resp,
+	})
+}
+
+func PostMessage(c *gin.Context) {
+	var data PostMessageStruct
+	if err := c.ShouldBindJSON(&data); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	PostMessageHandler(data.User, data.Dest, data.Message)
+
+	c.JSON(200, gin.H{
+		"Success ": data.Message,
 	})
 }

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -303,4 +304,62 @@ func postDataProfiler(url string) string {
 
 	return string(body)
 
+}
+
+// getProfile clone
+func getFromMessage(url string) string {
+
+	client := &http.Client{}
+	req, err := http.NewRequest("GET", url, nil)
+
+	if err != nil {
+		fmt.Println(err)
+		return "false"
+	}
+
+	res, err := client.Do(req)
+	if err != nil {
+		fmt.Println(err)
+		return "false"
+	}
+	defer res.Body.Close()
+
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		fmt.Println(err)
+		return "false"
+	}
+
+	var dat map[string]interface{}
+	if err := json.Unmarshal(body, &dat); err != nil {
+		panic(err)
+	}
+
+	return string(body)
+}
+
+func postFacteur(url, userID, dest, message string) {
+
+	requestBody := map[string]interface{}{
+		"message":    message,
+		"username":   userID,
+		"friendname": dest,
+	}
+
+	jsonData, err := json.Marshal(requestBody)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	resp, err := http.Post(url, "application/json", bytes.NewBuffer(jsonData))
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode == http.StatusOK {
+		fmt.Println("POST request sent successfully")
+	} else {
+		fmt.Printf("POST request failed with status: %s", resp.Status)
+	}
 }
