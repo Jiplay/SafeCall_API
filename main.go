@@ -284,10 +284,9 @@ func PostMessage(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-
 	PostMessageHandler(data.User, data.Dest, data.Message)
 
 	c.JSON(200, gin.H{
-		"Success ": data.Message,
+		"Success ": "True",
 	})
 }

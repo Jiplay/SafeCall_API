@@ -307,35 +307,66 @@ func postDataProfiler(url string) string {
 }
 
 // getProfile clone
-func getFromMessage(url string) string {
+func getFromMessage(url string) [][]string {
 
 	client := &http.Client{}
 	req, err := http.NewRequest("GET", url, nil)
 
 	if err != nil {
 		fmt.Println(err)
-		return "false"
+		return nil
 	}
 
 	res, err := client.Do(req)
 	if err != nil {
 		fmt.Println(err)
-		return "false"
+		return nil
 	}
 	defer res.Body.Close()
 
 	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
 		fmt.Println(err)
-		return "false"
+		return nil
 	}
 
-	var dat map[string]interface{}
+	var dat [][]string
 	if err := json.Unmarshal(body, &dat); err != nil {
 		panic(err)
 	}
 
-	return string(body)
+	return dat
+}
+
+func getAllConvQuery(url string) []string {
+
+	client := &http.Client{}
+	req, err := http.NewRequest("GET", url, nil)
+
+	if err != nil {
+		fmt.Println(err)
+		return nil
+	}
+
+	res, err := client.Do(req)
+	if err != nil {
+		fmt.Println(err)
+		return nil
+	}
+	defer res.Body.Close()
+
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		fmt.Println(err)
+		return nil
+	}
+
+	var dat []string
+	if err := json.Unmarshal(body, &dat); err != nil {
+		panic(err)
+	}
+
+	return dat
 }
 
 func postFacteur(url, userID, dest, message string) {
