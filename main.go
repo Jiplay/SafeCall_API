@@ -25,9 +25,9 @@ func CORS() gin.HandlerFunc {
 }
 
 type PostMessageStruct struct {
-	User    string `bson:"User"`
-	Dest    string `bson:"Dest"`
-	Message string `bson:"Message"`
+	Username   string `bson:"Username"`
+	Friendname string `bson:"Friendname"`
+	Message    string `bson:"Message"`
 }
 
 func main() {
@@ -292,7 +292,7 @@ func PostMessage(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	PostMessageHandler(data.User, data.Dest, data.Message)
+	PostMessageHandler(data.Username, data.Friendname, data.Message)
 
 	c.JSON(200, gin.H{
 		"Success ": "True",

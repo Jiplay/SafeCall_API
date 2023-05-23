@@ -372,9 +372,9 @@ func getAllConvQuery(url string) []string {
 func postFacteur(url, userID, dest, message string) {
 
 	requestBody := map[string]interface{}{
-		"message":    message,
 		"username":   userID,
 		"friendname": dest,
+		"message":    message,
 	}
 
 	jsonData, err := json.Marshal(requestBody)
@@ -388,9 +388,4 @@ func postFacteur(url, userID, dest, message string) {
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode == http.StatusOK {
-		fmt.Println("POST request sent successfully")
-	} else {
-		fmt.Printf("POST request failed with status: %s", resp.Status)
-	}
 }
