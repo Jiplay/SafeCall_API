@@ -34,12 +34,25 @@ func main() {
 	r := gin.Default()
 	// r.Use(CORS())
 
+	r.Use(func(c *gin.Context) {
+		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+		c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+
+		if c.Request.Method == "OPTIONS" {
+			c.AbortWithStatus(http.StatusOK)
+			return
+		}
+
+		c.Next()
+	})
+
 	r.GET("/login/:login/:psw", login)        // TESTE
 	r.GET("/profile/:userID", getUserProfile) // TESTE
 	r.GET("/search/:userID", SearchNameEndpoint)
 
-	r.POST("/forgetPassword/:email", forgetPassword)
-	r.POST("/forgetPassword/:email/:code", checkcode)
+	r.POST("/forgetPassword/:email", forgetPassword)  // Untestable
+	r.POST("/forgetPassword/:email/:code", checkcode) // Untestable
 	r.POST("/setPassword/:email/:new", setPswEndpoint)
 	r.POST("/editPassword/:userID/:old/:new", editPswEndpoint)
 

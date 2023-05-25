@@ -48,6 +48,18 @@ def login():
 
     return response.text
 
+
+def newIdslogin():
+    url = "http://20.234.168.103:8080/login/testguy01/PassSaf3à*"
+
+    payload = {}
+    headers = {}
+
+    response = requests.request("GET", url, headers=headers, data=payload)
+
+    return response.text
+
+
 def getProfile():
     url = "http://20.234.168.103:8080/profile/testguy01/"
 
@@ -146,6 +158,17 @@ def listEvent(user):
     return response.text
 
 
+def editPassword():
+    url = "http://20.234.168.103:8080/editPassword/testguy01/safePasswo0d*/PassSaf3à*"
+
+    payload = {}
+    headers = {}
+
+    response = requests.request("POST", url, headers=headers, data=payload)
+
+    return response.text
+
+
 # Useful functions
 
 ##############################################################################################
@@ -238,14 +261,35 @@ def event_creation():
     print("Success : Event creation : ok")
 
 
+def password_check():
+    register()
+    login()
+    c = editPassword()
+    a = login()
+    b = newIdslogin()
+
+    print(a)
+    print(c)
+    print(b)
+    delete_user()
+
+    if a != '{"failed":"404"}' or b != '{"success":"testguy01"}' or c != '{"success":"200"}':
+        print("FAILED : Error edit password : ko")
+        return 1
+    print("SUCCESS : edit password : ok")
+
+
+
+
 
 def test_all_scenari():
-    # account_creation()
-    # profile_edition()
-    # friendship()
-    # refuse_friendship()
-    # delete_friendship()
+    account_creation()
+    profile_edition()
+    friendship()
+    refuse_friendship()
+    delete_friendship()
     event_creation()
+    password_check()
 
 
 
