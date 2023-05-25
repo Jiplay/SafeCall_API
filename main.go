@@ -67,7 +67,7 @@ func main() {
 	r.POST("/replyFriend/:userID/:friend/:action", replyFriendEndpoint)   // TESTE
 	r.GET("/listFriends/:userID", listFriends)                            // TESTE
 
-	r.POST("/addEvent/", addEventEndpoint)                      // TEST
+	r.POST("/addEvent", addEventEndpoint)                       // TEST
 	r.POST("/delEvent/:guest1/:guest2/:date", delEventEndpoint) // TEST
 	r.GET("/listEvent/:userID", listEventEndpoint)              // TEST
 
