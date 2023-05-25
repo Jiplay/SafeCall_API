@@ -34,8 +34,8 @@ func main() {
 	r := gin.Default()
 	// r.Use(CORS())
 
-	r.GET("/login/:login/:psw", login)
-	r.GET("/profile/:userID", getUserProfile)
+	r.GET("/login/:login/:psw", login)        // TESTE
+	r.GET("/profile/:userID", getUserProfile) // TESTE
 	r.GET("/search/:userID", SearchNameEndpoint)
 
 	r.POST("/forgetPassword/:email", forgetPassword)
@@ -43,20 +43,20 @@ func main() {
 	r.POST("/setPassword/:email/:new", setPswEndpoint)
 	r.POST("/editPassword/:userID/:old/:new", editPswEndpoint)
 
-	r.POST("/register/:login/:psw/:email", register)
-	r.POST("/profileDescription/:userID/:data", postDescription)
-	r.POST("/profileFullName/:userID/:data", postFullName)
-	r.POST("/profilePhoneNB/:userID/:data", postPhoneNB)
-	r.POST("/profileEmail/:userID/:data", postEmail)
-	r.POST("/delete/:userID", deleteUser)
+	r.POST("/register/:login/:psw/:email", register)             // TESTE
+	r.POST("/profileDescription/:userID/:data", postDescription) // TESTE
+	r.POST("/profileFullName/:userID/:data", postFullName)       // TESTE
+	r.POST("/profilePhoneNB/:userID/:data", postPhoneNB)         // TESTE
+	r.POST("/profileEmail/:userID/:data", postEmail)             // TESTE
+	r.POST("/delete/:userID", deleteUser)                        // TESTE
 
-	r.POST("/manageFriend/:userID/:friend/:action", manageFriendEndpoint)
-	r.POST("/replyFriend/:userID/:friend/:action", replyFriendEndpoint)
-	r.GET("/listFriends/:userID", listFriends)
+	r.POST("/manageFriend/:userID/:friend/:action", manageFriendEndpoint) // TESTE
+	r.POST("/replyFriend/:userID/:friend/:action", replyFriendEndpoint)   // TESTE
+	r.GET("/listFriends/:userID", listFriends)                            // TESTE
 
-	r.POST("/addEvent/", addEventEndpoint)
-	r.POST("/delEvent/:guest1/:guest2/:date", delEventEndpoint)
-	r.GET("/listEvent/:userID", listEventEndpoint)
+	r.POST("/addEvent/", addEventEndpoint)                      // TEST
+	r.POST("/delEvent/:guest1/:guest2/:date", delEventEndpoint) // TEST
+	r.GET("/listEvent/:userID", listEventEndpoint)              // TEST
 
 	r.POST("/notification/:UserID/:Title/:Content/:Status", addNotificationEndpoint)
 	r.POST("/notification/:UserID/:Title", delNotificationEndpoint)
