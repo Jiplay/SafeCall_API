@@ -47,33 +47,33 @@ func main() {
 		c.Next()
 	})
 
-	r.GET("/login/:login/:psw", login)        // TESTE
-	r.GET("/profile/:userID", getUserProfile) // TESTE
+	r.GET("/login/:login/:psw", login)        // TESTED
+	r.GET("/profile/:userID", getUserProfile) // TESTED
 	r.GET("/search/:userID", SearchNameEndpoint)
 
-	r.POST("/forgetPassword/:email", forgetPassword)  // Untestable
-	r.POST("/forgetPassword/:email/:code", checkcode) // Untestable
+	r.POST("/forgetPassword/:email", forgetPassword)  // UNTESTABLE
+	r.POST("/forgetPassword/:email/:code", checkcode) // UNTESTABLE
 	r.POST("/setPassword/:email/:new", setPswEndpoint)
 	r.POST("/editPassword/:userID/:old/:new", editPswEndpoint)
 
-	r.POST("/register/:login/:psw/:email", register)             // TESTE
-	r.POST("/profileDescription/:userID/:data", postDescription) // TESTE
-	r.POST("/profileFullName/:userID/:data", postFullName)       // TESTE
-	r.POST("/profilePhoneNB/:userID/:data", postPhoneNB)         // TESTE
-	r.POST("/profileEmail/:userID/:data", postEmail)             // TESTE
-	r.POST("/delete/:userID", deleteUser)                        // TESTE
+	r.POST("/register/:login/:psw/:email", register)             // TESTED
+	r.POST("/profileDescription/:userID/:data", postDescription) // TESTED
+	r.POST("/profileFullName/:userID/:data", postFullName)       // TESTED
+	r.POST("/profilePhoneNB/:userID/:data", postPhoneNB)         // TESTED
+	r.POST("/profileEmail/:userID/:data", postEmail)             // TESTED
+	r.POST("/delete/:userID", deleteUser)                        // TESTED
 
-	r.POST("/manageFriend/:userID/:friend/:action", manageFriendEndpoint) // TESTE
-	r.POST("/replyFriend/:userID/:friend/:action", replyFriendEndpoint)   // TESTE
-	r.GET("/listFriends/:userID", listFriends)                            // TESTE
+	r.POST("/manageFriend/:userID/:friend/:action", manageFriendEndpoint) // TESTED
+	r.POST("/replyFriend/:userID/:friend/:action", replyFriendEndpoint)   // TESTED
+	r.GET("/listFriends/:userID", listFriends)                            // TESTED
 
-	r.POST("/addEvent", addEventEndpoint)                       // TEST
-	r.POST("/delEvent/:guest1/:guest2/:date", delEventEndpoint) // TEST
-	r.GET("/listEvent/:userID", listEventEndpoint)              // TEST
+	r.POST("/addEvent", addEventEndpoint)                       // TESTED
+	r.POST("/delEvent/:guest1/:guest2/:date", delEventEndpoint) // TESTED
+	r.GET("/listEvent/:userID", listEventEndpoint)              // TESTED
 
-	r.POST("/notification/:UserID/:Title/:Content/:Status", addNotificationEndpoint)
-	r.POST("/notification/:UserID/:Title", delNotificationEndpoint)
-	r.GET("/notification/:UserID", GetUserNotification)
+	r.POST("/notification/:UserID/:Title/:Content/:Status", addNotificationEndpoint) // TESTED
+	r.POST("/notification/:UserID/:Title", delNotificationEndpoint)                  // TESTED
+	r.GET("/notification/:UserID", GetUserNotification)                              // TESTED
 
 	r.GET("/conversations/:UserID", GetConversations)
 	r.GET("/messages/:UserID/:FriendID", GetMessages)

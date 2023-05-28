@@ -168,6 +168,36 @@ def editPassword():
     return response.text
 
 
+def addNotification():
+    url = "http://20.234.168.103:8080/notification/testguy01/bienvenue/bienvenue/false"
+
+    payload = {}
+    headers = {}
+
+    response = requests.request("POST", url, headers=headers, data=payload)
+
+    return response.text
+
+def delNotification():
+    url = "http://20.234.168.103:8080/notification/testguy01/bienvenue/"
+
+    payload = {}
+    headers = {}
+
+    response = requests.request("POST", url, headers=headers, data=payload)
+
+    return response.text
+
+def listNotification(user):
+    url = "http://20.234.168.103:8080/notification/"+ user
+
+    payload = {}
+    headers = {}
+
+    response = requests.request("GET", url, headers=headers, data=payload)
+
+    return response.text
+
 # Useful functions
 
 ##############################################################################################
@@ -278,6 +308,35 @@ def password_check():
         return 1
     print("SUCCESS : edit password : ok")
 
+def addnotification():
+    register()
+    a = addNotification()
+    print(a)
+    if not ("Success") in a:
+        print("FAILED : Error add notification : ko")
+        return 1
+    print("SUCCESS : add notification : ok")
+    delete_user()
+
+def delnotification():
+    register()
+    addNotification()
+    a = delNotification()
+    if not ("Success") in a:
+        print("FAILED : Error del notification : ko")
+        return 1
+    print("SUCCESS : del notification : ok")
+    delete_user()
+
+def getnotification():
+    register()
+    addNotification()
+    a = listNotification("testguy01")
+    if not ("Success") in a:
+        print("FAILED : Error get notification : ko")
+        return 1
+    print("SUCCESS : get notification : ok")
+    delete_user()
 
 def test_all_scenari():
     # account_creation()
@@ -287,6 +346,9 @@ def test_all_scenari():
     # delete_friendship()
     # event_creation()
     # password_check()
+    # addnotification()
+    # delnotification()
+    # getnotification()
     pass
 
 
