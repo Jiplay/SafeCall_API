@@ -343,7 +343,7 @@ func NewFeedback(c *gin.Context) {
 func GetFeedback(c *gin.Context) {
 	resp := GetFeedbackHandler()
 	c.JSON(200, gin.H{
-		"Success ": resp,
+		"Success": resp,
 	})
 }
 
@@ -356,6 +356,6 @@ func DelFeedback(c *gin.Context) {
 
 	resp := DelFeedbackHandler(data.Username, data.Date)
 	c.JSON(200, gin.H{
-		"Status ": resp,
+		"Success": resp,
 	})
 }
