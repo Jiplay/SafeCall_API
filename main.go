@@ -30,6 +30,17 @@ type PostMessageStruct struct {
 	Message    string `bson:"Message"`
 }
 
+type PostFeedbackStruct struct {
+	Username string `bson:"Username"`
+	Message  string `bson:"Message"`
+	Date     string `bson:"Message"`
+}
+
+type DelFeedbackStruct struct {
+	Username string `bson:"Username"`
+	Date     string `bson:"Date"`
+}
+
 func main() {
 	r := gin.Default()
 	// r.Use(CORS())
@@ -78,6 +89,10 @@ func main() {
 	r.GET("/conversations/:UserID", GetConversations)
 	r.GET("/messages/:UserID/:FriendID", GetMessages)
 	r.POST("/sendMessage", PostMessage)
+
+	r.POST("/feedback", NewFeedback)
+	r.GET("/feedback", GetFeedback)
+	r.POST("/delFeedback", DelFeedback)
 
 	r.GET("/tryCall", sendCall)
 
@@ -309,5 +324,38 @@ func PostMessage(c *gin.Context) {
 
 	c.JSON(200, gin.H{
 		"Success ": "True",
+	})
+}
+
+func NewFeedback(c *gin.Context) {
+	var data PostFeedbackStruct
+	if err := c.ShouldBindJSON(&data); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	NewFeedbackHandler(data.Username, data.Date, data.Message)
+
+	c.JSON(200, gin.H{
+		"Success ": "True",
+	})
+}
+
+func GetFeedback(c *gin.Context) {
+	resp := GetFeedbackHandler()
+	c.JSON(200, gin.H{
+		"Success ": resp,
+	})
+}
+
+func DelFeedback(c *gin.Context) {
+	var data DelFeedbackStruct
+	if err := c.ShouldBindJSON(&data); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	resp := DelFeedbackHandler(data.Username, data.Date)
+	c.JSON(200, gin.H{
+		"Status ": resp,
 	})
 }

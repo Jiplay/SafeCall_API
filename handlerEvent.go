@@ -29,3 +29,4 @@ func listEventHandler(userID string) []Event {
 
 	return events
 }
+

@@ -387,5 +387,111 @@ func postFacteur(url, userID, dest, message string) {
 		log.Fatal(err)
 	}
 	defer resp.Body.Close()
+}
 
+func AddFeedback(uri string, feedback Feedback) bool {
+	client, err := mongo.NewClient(options.Client().ApplyURI(uri))
+	if err != nil {
+		log.Fatal(err)
+		return false
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	err = client.Connect(ctx)
+	if err != nil {
+		log.Fatal(err)
+		return false
+	}
+
+	defer client.Disconnect(ctx)
+
+	database := client.Database("Support")
+	collection := database.Collection("Feedback")
+
+	_, err = collection.InsertOne(ctx, feedback)
+	if err != nil {
+		fmt.Println("Failed to insert feedback:", err)
+		return false
+	}
+
+	return true
+}
+
+func DeleteFeedback(uri string, username string, date string) bool {
+	client, err := mongo.NewClient(options.Client().ApplyURI(uri))
+	if err != nil {
+		log.Fatal(err)
+		return false
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	err = client.Connect(ctx)
+	if err != nil {
+		log.Fatal(err)
+		return false
+	}
+
+	defer client.Disconnect(ctx)
+
+	database := client.Database("Support")
+	collection := database.Collection("Feedback")
+
+	filter := bson.M{
+		"Username": username,
+		"Date":     date,
+	}
+
+	result, err := collection.DeleteOne(ctx, filter)
+	if err != nil {
+		fmt.Println("Failed to delete feedback:", err)
+		return false
+	}
+
+	if result.DeletedCount == 0 {
+		fmt.Println("No feedback deleted")
+		return false
+	}
+
+	return true
+}
+
+func GetFeedbacks(uri string) ([]Feedback, error) {
+	client, err := mongo.NewClient(options.Client().ApplyURI(uri))
+	if err != nil {
+		log.Fatal(err)
+		return nil, err
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	err = client.Connect(ctx)
+	if err != nil {
+		log.Fatal(err)
+		return nil, err
+	}
+
+	defer client.Disconnect(ctx)
+
+	database := client.Database("Support")
+	collection := database.Collection("Feedback")
+
+	cur, err := collection.Find(ctx, bson.M{})
+	if err != nil {
+		fmt.Println("Failed to retrieve feedbacks:", err)
+		return nil, err
+	}
+
+	var feedbacks []Feedback
+	err = cur.All(ctx, &feedbacks)
+	if err != nil {
+		fmt.Println("Failed to decode feedbacks:", err)
+		return nil, err
+	}
+
+	return feedbacks, nil
 }
