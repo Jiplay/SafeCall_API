@@ -10,7 +10,7 @@ func actionFriendHandler(url string) bool {
 }
 
 func getFriends(userID string) []string {
-	results := getDataProfiler(userID, "http://profiler:8081/friends/"+userID)
+	results := getDataProfiler(userID, "http://localhost:8081/friends/"+userID)
 
 	dest := strings.Split(results, ":")
 	s := strings.ReplaceAll(dest[1], ",", "")

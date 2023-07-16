@@ -112,7 +112,7 @@ func RegisterHandler(id, psw, email string) string { // TODO Ajouter un call au 
 
 	protoUser := userToProto(id, psw)
 	binary, _ := proto.Marshal(&protoUser)
-	url := "http://profiler:8081/create/" + id + "/" + wellFormatedEmail
+	url := "http://localhost:8081/create/" + id + "/" + wellFormatedEmail
 	if !ProfilerRequest(url) {
 		return "Unknown error while profile creation"
 	}
@@ -138,7 +138,7 @@ func postProfileHandler(endpoint, userID, data string) string {
 			return "Phone NB too long"
 		}
 	}
-	url := "http://profiler:8081/" + endpoint + "/" + userID + "/" + data
+	url := "http://localhost:8081/" + endpoint + "/" + userID + "/" + data
 	ProfilerRequest(url)
 	return "success"
 }
@@ -172,7 +172,7 @@ func sendCallService(senter, dest string) bool {
 	fmt.Println("Connecting to hello world server...")
 	requester, _ := zmq.NewSocket(zmq.PAIR)
 	defer requester.Close()
-	requester.Connect("tcp://profiler:5555")
+	requester.Connect("tcp://localhost:5555")
 
 	for request_nbr := 0; request_nbr != 10; request_nbr++ {
 		// send hello
@@ -189,6 +189,6 @@ func sendCallService(senter, dest string) bool {
 }
 
 func deleteUserData(userID string) string {
-	ProfilerRequest("http://profiler:8081/delete/" + userID)
+	ProfilerRequest("http://localhost:8081/delete/" + userID)
 	return "success"
 }
