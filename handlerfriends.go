@@ -5,8 +5,11 @@ import (
 )
 
 func actionFriendHandler(url string) bool {
-	resp := ProfilerRequest(url)
-	return resp
+	requestBody := map[string]interface{}{
+		"guest1": "FIXME",
+	}
+	postDataProfiler(url, requestBody)
+	return true
 }
 
 func getFriends(userID string) []string {

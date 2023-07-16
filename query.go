@@ -49,36 +49,6 @@ func AddUser(uri, login, psw, user, email string) bool {
 	return true
 }
 
-func ProfilerRequest(url string) bool {
-	client := &http.Client{}
-	req, err := http.NewRequest("POST", url, nil)
-
-	if err != nil {
-		fmt.Println(err)
-		return false
-	}
-
-	res, err := client.Do(req)
-	if err != nil {
-		fmt.Println(err)
-		return false
-	}
-	defer res.Body.Close()
-
-	body, err := ioutil.ReadAll(res.Body)
-	if err != nil {
-		fmt.Println(err)
-		return false
-	}
-
-	var dat map[string]interface{}
-	if err := json.Unmarshal(body, &dat); err != nil {
-		panic(err)
-	}
-
-	return true
-}
-
 func GetUsers(uri, database string) []bson.M {
 	client, err := mongo.NewClient(options.Client().ApplyURI(uri))
 	if err != nil {
@@ -275,31 +245,22 @@ func getDataProfiler(userID, url string) string {
 	return string(body)
 }
 
-func postDataProfiler(url string) string {
-	client := &http.Client{}
-	req, err := http.NewRequest("POST", url, nil)
+func postDataProfiler(url string, requestBody map[string]interface{}) string {
 
+	jsonData, err := json.Marshal(requestBody)
 	if err != nil {
-		fmt.Println(err)
-		return "false"
+		return ""
 	}
 
-	res, err := client.Do(req)
+	resp, err := http.Post(url, "application/json", bytes.NewBuffer(jsonData))
 	if err != nil {
-		fmt.Println(err)
-		return "false"
+		return ""
 	}
-	defer res.Body.Close()
+	defer resp.Body.Close()
 
-	body, err := ioutil.ReadAll(res.Body)
+	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		fmt.Println(err)
-		return "false"
-	}
-
-	var dat map[string]interface{}
-	if err := json.Unmarshal(body, &dat); err != nil {
-		panic(err)
+		return ""
 	}
 
 	return string(body)

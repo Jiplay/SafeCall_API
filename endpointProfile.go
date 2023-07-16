@@ -34,7 +34,7 @@ func postDescription(c *gin.Context) {
 		return
 	}
 
-	resp := postProfileHandler("description", data.UserID, data.Data)
+	resp := postProfileHandler("Description", data.UserID, data.Data)
 	if resp != "success" {
 		c.JSON(503, gin.H{
 			"failed": resp,

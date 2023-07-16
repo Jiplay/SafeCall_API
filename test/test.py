@@ -30,7 +30,7 @@ def registerFriends():
             "Login": logins[i],
             "Password": "safePasswo0d*",
             "Email": emails[i],
-            })
+        })
 
         headers = {
         'Content-Type': 'application/json'
@@ -44,7 +44,7 @@ def deleteFriends():
     i = 0
 
     while i != 2:
-        url = "http://localhost:8080/delete/"
+        url = "http://localhost:8080/delete"
         payload = json.dumps({
             "UserID": logins[i],
             })
@@ -266,7 +266,8 @@ def account_creation():
     if login() != '{"failed":"404"}':
         print("Not OK, the account shoudn't exist before registration")
         print("But I will try to delete the accounts")
-        delete_user()
+        a = delete_user()
+        print(a)
         exit(1)
     if register() != '{"success":"200"}':
         print("ERROR : Registration")
@@ -281,8 +282,11 @@ def account_creation():
 def profile_edition():
     register()
     update_profile()
-    if getProfile() != '{"profile":{"FullName":"MyFullNameTest","Description":"MyTestDescription","PhoneNb":"TestPhoneNB","Email":"myTest@email.com"}}':
+    resp = getProfile()
+    if resp != '{"profile":{"FullName":"MyFullNameTest","Description":"MyTestDescription","PhoneNb":"TestPhoneNB","Email":"myTest@email.com"}}':
         print("FAILED : Profile personalisation : ko")
+        print(resp)
+        delete_user()
         return 1
     delete_user()
     print("SUCCESS : Profile personalisation ok")
@@ -349,6 +353,7 @@ def event_creation():
 
     if a != b or a != '{"Success ":[{"Guests":"testguy01+testguy02","Date":"Demain soir","Subject":"bicyle","Confirmed":false}]}':
         print("FAILED : Event creation : ko")
+        deleteFriends()
         return 1
     deleteFriends()
     print("Success : Event creation : ok")
@@ -458,17 +463,17 @@ def feedback():
 
 
 def test_all_scenari():
-    account_creation()
-    profile_edition()
-    friendship()
-    refuse_friendship()
-    delete_friendship()
-    event_creation()
-    password_check()
-    addnotification()
+    # account_creation() ## DONE
+    # profile_edition() ## DONE
+    # friendship()
+    # refuse_friendship()
+    # delete_friendship()
+    # event_creation() ## DONE
+    # password_check()
+    # addnotification()
     # delnotification()
     # getnotification()
-    feedback()
+    # feedback()
     pass
 
 

@@ -112,10 +112,16 @@ func RegisterHandler(id, psw, email string) string { // TODO Ajouter un call au 
 
 	protoUser := userToProto(id, psw)
 	binary, _ := proto.Marshal(&protoUser)
-	url := "http://localhost:8081/create/" + id + "/" + wellFormatedEmail
-	if !ProfilerRequest(url) {
-		return "Unknown error while profile creation"
+
+	url := "http://localhost:8081/create"
+
+	requestBody := map[string]interface{}{
+		"Login": id,
+		"Email": wellFormatedEmail,
 	}
+	resp := postDataProfiler(url, requestBody)
+	fmt.Println(resp) // FIXME
+
 	if !AddUser(cred.Uri, id, psw, string(binary), wellFormatedEmail) {
 		return "Unknown error while registration"
 	}
@@ -123,23 +129,26 @@ func RegisterHandler(id, psw, email string) string { // TODO Ajouter un call au 
 }
 
 func postProfileHandler(endpoint, userID, data string) string {
-	if len(userID) > 45 {
-		return "User ID too long"
+	if endpoint == "Description" && len(data) > 350 {
+		return "Too long description"
+	}
+	if endpoint == "FullName" && len(data) > 30 {
+		return "Too long Full Name"
+	}
+	if endpoint == "PhoneNB" && len(data) > 15 {
+		return "Too long PhoneNB"
+	}
+	if endpoint == "Email" && len(data) > 50 {
+		return "Too long Email"
 	}
 
-	if endpoint == "FullName" {
-		if len(data) > 30 {
-			return "Full Name too long"
-		}
+	requestBody := map[string]interface{}{
+		"UserID": userID,
+		"Data":   data,
 	}
 
-	if endpoint == "PhoneNB" {
-		if len(data) > 15 {
-			return "Phone NB too long"
-		}
-	}
-	url := "http://localhost:8081/" + endpoint + "/" + userID + "/" + data
-	ProfilerRequest(url)
+	url := "http://localhost:8081/" + endpoint
+	postDataProfiler(url, requestBody)
 	return "success"
 }
 
@@ -189,6 +198,10 @@ func sendCallService(senter, dest string) bool {
 }
 
 func deleteUserData(userID string) string {
-	ProfilerRequest("http://localhost:8081/delete/" + userID)
-	return "success"
+	requestBody := map[string]interface{}{
+		"userID": userID,
+	}
+
+	resp := postDataProfiler("http://localhost:8081/delete", requestBody)
+	return resp
 }

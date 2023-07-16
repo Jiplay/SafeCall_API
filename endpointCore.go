@@ -36,6 +36,19 @@ type DeleteUserStruct struct {
 	UserID string `bson:"UserID"`
 }
 
+func deleteUser(c *gin.Context) {
+	var data DeleteUserStruct
+	if err := c.ShouldBindJSON(&data); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	resp := deleteUserData(data.UserID)
+
+	c.JSON(200, gin.H{
+		"Success ": resp,
+	})
+}
+
 func login(c *gin.Context) {
 	login := c.Param("login")
 	psw := c.Param("psw")
@@ -151,17 +164,4 @@ func setPswEndpoint(c *gin.Context) {
 			"success": "200",
 		})
 	}
-}
-
-func deleteUser(c *gin.Context) {
-	var data DeleteUserStruct
-	if err := c.ShouldBindJSON(&data); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-	resp := deleteUserData(data.UserID)
-
-	c.JSON(200, gin.H{
-		"Success ": resp,
-	})
 }

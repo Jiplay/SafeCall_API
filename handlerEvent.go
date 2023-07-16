@@ -6,15 +6,29 @@ import (
 )
 
 func addEventHandler(guest1, guest2, subject, date string) string {
-	url := "http://localhost:8081/addEvent/" + guest1 + "/" + guest2 + "/" + date + "/" + subject
-	res := postDataProfiler(url)
+	url := "http://localhost:8081/addEvent"
 
+	requestBody := map[string]interface{}{
+		"Guest1":  guest1,
+		"Guest2":  guest2,
+		"Subject": subject,
+		"Date":    date,
+	}
+
+	res := postDataProfiler(url, requestBody)
 	return res
 }
 
 func delEventHandler(guest1, guest2, date string) string {
-	url := "http://localhost:8081/delEvent/" + guest1 + "/" + guest2 + "/" + date
-	resp := postDataProfiler(url)
+	url := "http://localhost:8081/delEvent"
+
+	requestBody := map[string]interface{}{
+		"Guest1": guest1,
+		"Guest2": guest2,
+		"Date":   date,
+	}
+
+	resp := postDataProfiler(url, requestBody)
 	return resp
 }
 
