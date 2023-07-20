@@ -34,12 +34,10 @@ func addNotificationEndpoint(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-
 	res, err := strconv.ParseBool(data.Status)
-
 	if err != nil {
-		c.JSON(200, gin.H{
-			"Success ": err,
+		c.JSON(400, gin.H{
+			"Failure Bool conversion": err,
 		})
 	}
 

@@ -219,13 +219,16 @@ def editPassword():
 def addNotification():
     url = "http://localhost:8080/AddNotification"
 
-    payload = {
-        "UserID": "testguy01",
-        "Title": "bienvenue",
-        "Content": "bienvenue",
-        "Status": "false"
+    
+    payload = json.dumps({
+		"UserID": "testguy01",
+		"Title": "bienvenue",
+		"Content": "bienvenue",
+		"Status": "false"
+    })
+    headers = {
+        'Content-Type': 'application/json'
     }
-    headers = {}
 
     response = requests.request("POST", url, headers=headers, data=payload)
 
@@ -234,11 +237,13 @@ def addNotification():
 def delNotification():
     url = "http://localhost:8080/DelNotification"
 
-    payload = {
-        "UserID": "testguy01",
-        "Title": "bienvenue",
+    payload = json.dumps({
+		"UserID": "testguy01",
+		"Title": "bienvenue",
+    })
+    headers = {
+        'Content-Type': 'application/json'
     }
-    headers = {}
 
     response = requests.request("POST", url, headers=headers, data=payload)
 
@@ -379,6 +384,8 @@ def addnotification():
     print(a)
     if not ("Success") in a:
         print("FAILED : Error add notification : ko")
+        print(a)
+        delete_user()
         return 1
     print("SUCCESS : add notification : ok")
     delete_user()
@@ -388,7 +395,9 @@ def delnotification():
     addNotification()
     a = delNotification()
     if not ("Success") in a:
+        print(a)
         print("FAILED : Error del notification : ko")
+        delete_user()
         return 1
     print("SUCCESS : del notification : ok")
     delete_user()
@@ -399,6 +408,7 @@ def getnotification():
     a = listNotification("testguy01")
     if not ("Success") in a:
         print("FAILED : Error get notification : ko")
+        delete_user()
         return 1
     print("SUCCESS : get notification : ok")
     delete_user()
@@ -464,16 +474,17 @@ def feedback():
 
 def test_all_scenari():
     # account_creation() ## DONE
-    # profile_edition() ## DONE
-    # friendship()
-    # refuse_friendship()
-    # delete_friendship()
+    # profile_edition() ## DONE 
+    # friendship()  ## DONE
+    # refuse_friendship() ## Done 
+    # delete_friendship()  ## Done
     # event_creation() ## DONE
-    # password_check()
-    # addnotification()
-    # delnotification()
-    # getnotification()
-    # feedback()
+    # password_check()  ## DONE
+    # delete_user()
+    # addnotification()  ## Done
+    # delnotification()  ## Done
+    # getnotification()  ## DONE
+    # feedback()  ## Done
     pass
 
 

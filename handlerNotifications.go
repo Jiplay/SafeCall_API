@@ -9,13 +9,13 @@ func GetNotification(userID string) string {
 }
 
 func addNotificationHandler(UserID, Title, Content string, Status bool) string {
-	url := "http://localhost:8081/notification/" + UserID + "/" + Title + "/" + Content + "/" + fmt.Sprintf("%t", Status)
+	url := "http://localhost:8081/AddNotification"
 
 	requestBody := map[string]interface{}{
-		"guest1":  "guest1",
-		"guest2":  "guest2",
-		"subject": "subject",
-		"date":    "date",
+		"User":    UserID,
+		"Title":   Title,
+		"Content": Content,
+		"Status":  fmt.Sprintf("%t", Status),
 	}
 
 	res := postDataProfiler(url, requestBody)
@@ -23,12 +23,10 @@ func addNotificationHandler(UserID, Title, Content string, Status bool) string {
 }
 
 func delNotificationHandler(UserID, Title string) string {
-	url := "http://localhost:8081/notification/" + UserID + "/" + Title
+	url := "http://localhost:8081/DelNotification"
 	requestBody := map[string]interface{}{
-		"guest1":  "guest1",
-		"guest2":  "guest2",
-		"subject": "subject",
-		"date":    "date",
+		"User":  UserID,
+		"Title": Title,
 	}
 	res := postDataProfiler(url, requestBody)
 	return res

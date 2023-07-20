@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -25,9 +24,15 @@ func manageFriendEndpoint(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	url := fmt.Sprintf("http://localhost:8081/friend/%s/%s/%s", data.UserID, data.Friend, data.Action)
+	url := "http://localhost:8081/friend" ///friend/%s/%s/%s", data.UserID, data.Friend, data.Action)
 
-	resp := actionFriendHandler(url)
+	requestBody := map[string]interface{}{
+		"UserID": data.UserID,
+		"Dest":   data.Friend,
+		"Action": data.Action,
+	}
+
+	resp := actionFriendHandler(url, requestBody)
 	if !resp {
 		c.JSON(503, gin.H{
 			"failed": resp,
@@ -46,9 +51,15 @@ func replyFriendEndpoint(c *gin.Context) {
 		return
 	}
 
-	url := fmt.Sprintf("http://localhost:8081/friendRequest/%s/%s/%s", data.UserID, data.Friend, data.Action)
+	url := "http://localhost:8081/friendRequest"
 
-	resp := actionFriendHandler(url)
+	requestBody := map[string]interface{}{
+		"UserID": data.UserID,
+		"Dest":   data.Friend,
+		"Action": data.Action,
+	}
+
+	resp := actionFriendHandler(url, requestBody)
 	if !resp {
 		c.JSON(503, gin.H{
 			"failed": resp,

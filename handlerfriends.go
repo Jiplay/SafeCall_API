@@ -4,11 +4,8 @@ import (
 	"strings"
 )
 
-func actionFriendHandler(url string) bool {
-	requestBody := map[string]interface{}{
-		"guest1": "FIXME",
-	}
-	postDataProfiler(url, requestBody)
+func actionFriendHandler(url string, body map[string]interface{}) bool {
+	postDataProfiler(url, body)
 	return true
 }
 
