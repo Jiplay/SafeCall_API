@@ -78,38 +78,6 @@ func GetUsers(uri, database string) []bson.M {
 	return users
 }
 
-func UpdateProfile(uri, endpoint, userID, data string) bool {
-	url := "http://localhost:8081/" + endpoint + "/" + userID + "/" + data
-
-	client := &http.Client{}
-	req, err := http.NewRequest("POST", url, nil)
-
-	if err != nil {
-		fmt.Println(err)
-		return false
-	}
-
-	res, err := client.Do(req)
-	if err != nil {
-		fmt.Println(err)
-		return false
-	}
-	defer res.Body.Close()
-
-	body, err := ioutil.ReadAll(res.Body)
-	if err != nil {
-		fmt.Println(err)
-		return false
-	}
-
-	var dat map[string]interface{}
-	if err := json.Unmarshal(body, &dat); err != nil {
-		panic(err)
-	}
-
-	return true
-}
-
 func getProfile(userID string) string {
 	url := "http://localhost:8081/Profile" + "/" + userID
 
@@ -172,10 +140,6 @@ func searchNameQuery(username string) string {
 	}
 
 	return string(body)
-}
-
-func actionFriend(me, dest, action string) {
-
 }
 
 func editLoginInfo(uri, finder, new string, endpoint int) bool {
