@@ -430,6 +430,7 @@ def addFeedback():
 
     return response.text
 
+
 def DelFeedback():
     url = "http://localhost:8080/delFeedback"
 
@@ -471,6 +472,65 @@ def feedback():
     # print(resp)
 
 
+def addReport():
+    url = "http://localhost:8080/report"
+
+    payload = json.dumps({
+        "Username": "testguy01",
+        "Message": "Je ne l aime pas",
+        "Date": "En ce jour"
+    })
+    headers = {
+    'Content-Type': 'application/json'
+    }
+
+    response = requests.request("POST", url, headers=headers, data=payload)
+
+    return response.text
+
+
+def getReport():
+    url = "http://localhost:8080/report"
+
+    payload = {}
+    headers = {}
+
+    response = requests.request("GET", url, headers=headers, data=payload)
+
+    return response.text
+
+
+def DelReport():
+    url = "http://localhost:8080/delReport"
+
+    payload = json.dumps({
+        "Username": "testguy01",
+        "Date": "en ce jour",
+    })
+    headers = {
+    'Content-Type': 'application/json'
+    }
+
+    response = requests.request("POST", url, headers=headers, data=payload)
+
+    return response.text
+
+
+def report():
+    ExpectedOutput = '{"Success":[{"Username":"testguy01","Date":"En ce jour","Message":"Je ne l aime pas"}]}'
+    addReport()
+    resp = getReport()
+    if ExpectedOutput in resp:
+        print("YES")
+        DelReport()
+        pass
+    else:
+        print("FAILED : Report : ko")
+        print(resp)
+        return 1
+    # print(resp)
+
+
 
 def test_all_scenari():
     # account_creation() ## DONE
@@ -485,6 +545,7 @@ def test_all_scenari():
     # delnotification()  ## Done
     # getnotification()  ## DONE
     # feedback()  ## Done
+    report()
     pass
 
 

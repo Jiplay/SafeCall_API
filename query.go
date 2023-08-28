@@ -420,3 +420,110 @@ func GetFeedbacks(uri string) ([]Feedback, error) {
 
 	return feedbacks, nil
 }
+
+func AddReport(uri string, report Report) bool {
+	client, err := mongo.NewClient(options.Client().ApplyURI(uri))
+	if err != nil {
+		log.Fatal(err)
+		return false
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	err = client.Connect(ctx)
+	if err != nil {
+		log.Fatal(err)
+		return false
+	}
+
+	defer client.Disconnect(ctx)
+
+	database := client.Database("Support")
+	collection := database.Collection("Report")
+
+	_, err = collection.InsertOne(ctx, report)
+	if err != nil {
+		fmt.Println("Failed to insert feedback:", err)
+		return false
+	}
+
+	return true
+}
+
+func GetReportsQuery(uri string) ([]Report, error) {
+	client, err := mongo.NewClient(options.Client().ApplyURI(uri))
+	if err != nil {
+		log.Fatal(err)
+		return nil, err
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	err = client.Connect(ctx)
+	if err != nil {
+		log.Fatal(err)
+		return nil, err
+	}
+
+	defer client.Disconnect(ctx)
+
+	database := client.Database("Support")
+	collection := database.Collection("Report")
+
+	cur, err := collection.Find(ctx, bson.M{})
+	if err != nil {
+		fmt.Println("Failed to retrieve Reports:", err)
+		return nil, err
+	}
+
+	var reports []Report
+	err = cur.All(ctx, &reports)
+	if err != nil {
+		fmt.Println("Failed to decode Reports:", err)
+		return nil, err
+	}
+
+	return reports, nil
+}
+
+func DeleteReport(uri string, username string, date string) bool {
+	client, err := mongo.NewClient(options.Client().ApplyURI(uri))
+	if err != nil {
+		log.Fatal(err)
+		return false
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	err = client.Connect(ctx)
+	if err != nil {
+		log.Fatal(err)
+		return false
+	}
+
+	defer client.Disconnect(ctx)
+
+	database := client.Database("Support")
+	collection := database.Collection("Report")
+
+	filter := bson.M{
+		"Username": username,
+		"Date":     date,
+	}
+
+	result, err := collection.DeleteOne(ctx, filter)
+	if err != nil {
+		fmt.Println("Failed to delete report:", err)
+		return false
+	}
+
+	if result.DeletedCount == 0 {
+		fmt.Println("No report deleted")
+		return false
+	}
+
+	return true
+}

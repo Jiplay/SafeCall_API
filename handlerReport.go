@@ -12,9 +12,9 @@ func NewReportHandler(user, date, message string) {
 	AddReport(url.Uri, report)
 }
 
-func GetReportHandler() []Feedback {
+func GetReportHandler() []Report {
 	url := getCredentials()
-	resp, _ := GetReports(url.Uri)
+	resp, _ := GetReportsQuery(url.Uri)
 	return resp
 }
 
@@ -23,8 +23,8 @@ func DelReportHandler(user, date string) string {
 	resp := DeleteReport(url.Uri, user, date)
 
 	if !resp { // if resp == false {
-		return "No feedback found"
+		return "No reports found"
 	}
-	return "Feedback correctly deleted"
+	return "Reports correctly deleted"
 
 }

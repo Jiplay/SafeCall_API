@@ -68,13 +68,17 @@ func main() {
 	r.POST("/DelNotification", delNotificationEndpoint) // TESTED
 	r.GET("/notification/:UserID", GetUserNotification) // TESTED
 
+	r.POST("/sendMessage", PostMessage)
 	r.GET("/conversations/:UserID", GetConversations)
 	r.GET("/messages/:UserID/:FriendID", GetMessages)
-	r.POST("/sendMessage", PostMessage)
 
 	r.POST("/feedback", NewFeedback)
-	r.GET("/feedback", GetFeedback)
 	r.POST("/delFeedback", DelFeedback)
+	r.GET("/feedback", GetFeedback)
+
+	r.POST("/report", NewReport)
+	r.POST("/delReport", DelReports)
+	r.GET("/report", GetReports)
 
 	r.GET("/tryCall", sendCall)
 

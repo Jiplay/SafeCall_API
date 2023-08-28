@@ -9,7 +9,7 @@ import (
 type PostReportStruct struct {
 	Username string `bson:"Username"`
 	Message  string `bson:"Message"`
-	Date     string `bson:"Message"`
+	Date     string `bson:"Date"`
 }
 
 type DelReportStruct struct {
