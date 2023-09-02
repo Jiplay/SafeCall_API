@@ -49,36 +49,6 @@ func AddUser(uri, login, psw, user, email string) bool {
 	return true
 }
 
-func ProfilerRequest(url string) bool {
-	client := &http.Client{}
-	req, err := http.NewRequest("POST", url, nil)
-
-	if err != nil {
-		fmt.Println(err)
-		return false
-	}
-
-	res, err := client.Do(req)
-	if err != nil {
-		fmt.Println(err)
-		return false
-	}
-	defer res.Body.Close()
-
-	body, err := ioutil.ReadAll(res.Body)
-	if err != nil {
-		fmt.Println(err)
-		return false
-	}
-
-	var dat map[string]interface{}
-	if err := json.Unmarshal(body, &dat); err != nil {
-		panic(err)
-	}
-
-	return true
-}
-
 func GetUsers(uri, database string) []bson.M {
 	client, err := mongo.NewClient(options.Client().ApplyURI(uri))
 	if err != nil {
@@ -108,40 +78,8 @@ func GetUsers(uri, database string) []bson.M {
 	return users
 }
 
-func UpdateProfile(uri, endpoint, userID, data string) bool {
-	url := "http://profiler:8081/" + endpoint + "/" + userID + "/" + data
-
-	client := &http.Client{}
-	req, err := http.NewRequest("POST", url, nil)
-
-	if err != nil {
-		fmt.Println(err)
-		return false
-	}
-
-	res, err := client.Do(req)
-	if err != nil {
-		fmt.Println(err)
-		return false
-	}
-	defer res.Body.Close()
-
-	body, err := ioutil.ReadAll(res.Body)
-	if err != nil {
-		fmt.Println(err)
-		return false
-	}
-
-	var dat map[string]interface{}
-	if err := json.Unmarshal(body, &dat); err != nil {
-		panic(err)
-	}
-
-	return true
-}
-
 func getProfile(userID string) string {
-	url := "http://profiler:8081/Profile" + "/" + userID
+	url := "http://localhost:8081/Profile" + "/" + userID
 
 	client := &http.Client{}
 	req, err := http.NewRequest("GET", url, nil)
@@ -173,7 +111,7 @@ func getProfile(userID string) string {
 }
 
 func searchNameQuery(username string) string {
-	url := "http://profiler:8081/search" + "/" + username
+	url := "http://localhost:8081/search" + "/" + username
 
 	client := &http.Client{}
 	req, err := http.NewRequest("GET", url, nil)
@@ -202,10 +140,6 @@ func searchNameQuery(username string) string {
 	}
 
 	return string(body)
-}
-
-func actionFriend(me, dest, action string) {
-
 }
 
 func editLoginInfo(uri, finder, new string, endpoint int) bool {
@@ -275,31 +209,22 @@ func getDataProfiler(userID, url string) string {
 	return string(body)
 }
 
-func postDataProfiler(url string) string {
-	client := &http.Client{}
-	req, err := http.NewRequest("POST", url, nil)
+func postDataProfiler(url string, requestBody map[string]interface{}) string {
 
+	jsonData, err := json.Marshal(requestBody)
 	if err != nil {
-		fmt.Println(err)
-		return "false"
+		return ""
 	}
 
-	res, err := client.Do(req)
+	resp, err := http.Post(url, "application/json", bytes.NewBuffer(jsonData))
 	if err != nil {
-		fmt.Println(err)
-		return "false"
+		return ""
 	}
-	defer res.Body.Close()
+	defer resp.Body.Close()
 
-	body, err := ioutil.ReadAll(res.Body)
+	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		fmt.Println(err)
-		return "false"
-	}
-
-	var dat map[string]interface{}
-	if err := json.Unmarshal(body, &dat); err != nil {
-		panic(err)
+		return ""
 	}
 
 	return string(body)
@@ -494,4 +419,111 @@ func GetFeedbacks(uri string) ([]Feedback, error) {
 	}
 
 	return feedbacks, nil
+}
+
+func AddReport(uri string, report Report) bool {
+	client, err := mongo.NewClient(options.Client().ApplyURI(uri))
+	if err != nil {
+		log.Fatal(err)
+		return false
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	err = client.Connect(ctx)
+	if err != nil {
+		log.Fatal(err)
+		return false
+	}
+
+	defer client.Disconnect(ctx)
+
+	database := client.Database("Support")
+	collection := database.Collection("Report")
+
+	_, err = collection.InsertOne(ctx, report)
+	if err != nil {
+		fmt.Println("Failed to insert feedback:", err)
+		return false
+	}
+
+	return true
+}
+
+func GetReportsQuery(uri string) ([]Report, error) {
+	client, err := mongo.NewClient(options.Client().ApplyURI(uri))
+	if err != nil {
+		log.Fatal(err)
+		return nil, err
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	err = client.Connect(ctx)
+	if err != nil {
+		log.Fatal(err)
+		return nil, err
+	}
+
+	defer client.Disconnect(ctx)
+
+	database := client.Database("Support")
+	collection := database.Collection("Report")
+
+	cur, err := collection.Find(ctx, bson.M{})
+	if err != nil {
+		fmt.Println("Failed to retrieve Reports:", err)
+		return nil, err
+	}
+
+	var reports []Report
+	err = cur.All(ctx, &reports)
+	if err != nil {
+		fmt.Println("Failed to decode Reports:", err)
+		return nil, err
+	}
+
+	return reports, nil
+}
+
+func DeleteReport(uri string, username string, date string) bool {
+	client, err := mongo.NewClient(options.Client().ApplyURI(uri))
+	if err != nil {
+		log.Fatal(err)
+		return false
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	err = client.Connect(ctx)
+	if err != nil {
+		log.Fatal(err)
+		return false
+	}
+
+	defer client.Disconnect(ctx)
+
+	database := client.Database("Support")
+	collection := database.Collection("Report")
+
+	filter := bson.M{
+		"Username": username,
+		"Date":     date,
+	}
+
+	result, err := collection.DeleteOne(ctx, filter)
+	if err != nil {
+		fmt.Println("Failed to delete report:", err)
+		return false
+	}
+
+	if result.DeletedCount == 0 {
+		fmt.Println("No report deleted")
+		return false
+	}
+
+	return true
 }

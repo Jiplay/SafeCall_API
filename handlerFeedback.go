@@ -8,6 +8,7 @@ type Feedback struct {
 
 func NewFeedbackHandler(user, date, message string) {
 	url := getCredentials()
+	message = checkForBannedWords(message)
 	feedback := Feedback{user, date, message}
 	AddFeedback(url.Uri, feedback)
 }

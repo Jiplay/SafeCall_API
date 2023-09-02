@@ -27,6 +27,7 @@ func GetMessagesHandler(userID, friendID string) []Messages {
 }
 
 func PostMessageHandler(userID, friendID, message string) {
+	message = checkForBannedWords(message)
 	url := "http://facteur:3000/send_message"
 	postFacteur(url, userID, friendID, message)
 }

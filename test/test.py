@@ -2,10 +2,17 @@ import requests, json
 
 
 def register():
-    url = "http://20.234.168.103:8080/register/testguy01/safePasswo0d*/email@gmail.cam"
+    url = "http://localhost:8080/register"
 
-    payload = {}
-    headers = {}
+    payload = json.dumps({
+        "Login": "testguy01",
+        "Password": "safePasswo0d*",
+        "Email": "jujujumail@gmail.cim",
+    })
+
+    headers = {
+        'Content-Type': 'application/json'
+    }
 
     response = requests.request("POST", url, headers=headers, data=payload)
 
@@ -13,14 +20,21 @@ def register():
 
 
 def registerFriends():
-    emails = ['email@gmail.cam', 'email@gmail.com']
+    emails = ['jujujumail@gmail.cim', 'jujujumail@gmail.com']
     logins = ['testguy01', 'testguy02']
     i = 0
 
     while i != 2:
-        url = "http://20.234.168.103:8080/register/"+logins[i]+"/safePasswo0d*/"+emails[i]
-        payload = {}
-        headers = {}
+        url = "http://localhost:8080/register"
+        payload = json.dumps({
+            "Login": logins[i],
+            "Password": "safePasswo0d*",
+            "Email": emails[i],
+        })
+
+        headers = {
+        'Content-Type': 'application/json'
+        }
         requests.request("POST", url, headers=headers, data=payload)
         i += 1
 
@@ -30,15 +44,20 @@ def deleteFriends():
     i = 0
 
     while i != 2:
-        url = "http://20.234.168.103:8080/delete/"+logins[i]
-        payload = {}
-        headers = {}
+        url = "http://localhost:8080/delete"
+        payload = json.dumps({
+            "UserID": logins[i],
+            })
+
+        headers = {
+        'Content-Type': 'application/json'
+        }
         requests.request("POST", url, headers=headers, data=payload)
         i += 1
 
 
 def login():
-    url = "http://20.234.168.103:8080/login/testguy01/safePasswo0d*"
+    url = "http://localhost:8080/login/testguy01/safePasswo0d*"
 
     payload = {}
     headers = {}
@@ -49,7 +68,7 @@ def login():
 
 
 def newIdslogin():
-    url = "http://20.234.168.103:8080/login/testguy01/PassSaf3à*"
+    url = "http://localhost:8080/login/testguy01/PassSaf3à*"
 
     payload = {}
     headers = {}
@@ -60,7 +79,7 @@ def newIdslogin():
 
 
 def getProfile():
-    url = "http://20.234.168.103:8080/profile/testguy01/"
+    url = "http://localhost:8080/profile/testguy01/"
 
     payload = {}
     headers = {}
@@ -71,10 +90,14 @@ def getProfile():
 
 
 def delete_user():
-    url = "http://20.234.168.103:8080/delete/testguy01"
+    url = "http://localhost:8080/delete"
+    payload = json.dumps({
+        "UserID": "testguy01",
+    })
 
-    payload = {}
-    headers = {}
+    headers = {
+        'Content-Type': 'application/json'
+    }
 
     response = requests.request("POST", url, headers=headers, data=payload)
 
@@ -86,20 +109,33 @@ def update_profile():
     data = ['MyTestDescription', 'MyFullNameTest', 'TestPhoneNB', 'myTest@email.com']
     i = 0
     while i < 4:
-        url = "http://20.234.168.103:8080/"+endpoints[i]+"/testguy01/"+ data[i]
+        url = "http://localhost:8080/"+endpoints[i]
 
-        payload = {}
-        headers = {}
+        payload = json.dumps({
+            "UserID": "testguy01",
+            "Data": data[i]
+        })
+
+        headers = {
+        'Content-Type': 'application/json'
+        }
 
         requests.request("POST", url, headers=headers, data=payload)
         i += 1
 
 
 def addFriend(action):
-    url = "http://20.234.168.103:8080/manageFriend/testguy01/testguy02/"+action
+    url = "http://localhost:8080/manageFriend"
 
-    payload = {}
-    headers = {}
+    payload = json.dumps({
+        "UserID": "testguy01",
+        "Friend": "testguy02",
+        "Action": action
+    })
+
+    headers = {
+    'Content-Type': 'application/json'
+    }
 
     response = requests.request("POST", url, headers=headers, data=payload)
 
@@ -107,18 +143,24 @@ def addFriend(action):
 
 
 def replyFriend(action):
-    url = "http://20.234.168.103:8080/replyFriend/testguy02/testguy01/"+ action
+    url = "http://localhost:8080/replyFriend"
 
-    payload = {}
-    headers = {}
+    payload = json.dumps({
+        "UserID": "testguy02",
+        "Friend": "testguy01",
+        "Action": action
+    })
 
+    headers = {
+    'Content-Type': 'application/json'
+    }
     response = requests.request("POST", url, headers=headers, data=payload)
 
     return response.text
 
 
 def listFriends(user):
-    url = "http://20.234.168.103:8080/listFriends/"+ user
+    url = "http://localhost:8080/listFriends/"+ user
 
     payload = {}
     headers = {}
@@ -129,16 +171,16 @@ def listFriends(user):
 
 
 def addEvent():
-    url = "http://20.234.168.103:8080/addEvent"
+    url = "http://localhost:8080/addEvent"
 
     payload = json.dumps({
-    "Guest1": "testguy01",
-    "Guest2": "testguy02",
-    "Subject": "bicyle",
-    "Date": "Demain soir"
+        "Guest1": "testguy01",
+        "Guest2": "testguy02",
+        "Subject": "bicyle",
+        "Date": "Demain soir"
     })
     headers = {
-    'Content-Type': 'application/json'
+        'Content-Type': 'application/json'
     }
 
     response = requests.request("POST", url, headers=headers, data=payload)
@@ -147,7 +189,7 @@ def addEvent():
 
 
 def listEvent(user):
-    url = "http://20.234.168.103:8080/listEvent/"+ user
+    url = "http://localhost:8080/listEvent/"+ user
 
     payload = {}
     headers = {}
@@ -158,10 +200,16 @@ def listEvent(user):
 
 
 def editPassword():
-    url = "http://20.234.168.103:8080/editPassword/testguy01/safePasswo0d*/PassSaf3à*"
+    url = "http://localhost:8080/editPassword"
 
-    payload = {}
-    headers = {}
+    payload = json.dumps({
+        "UserID": "testguy01",
+        "PasswordOld": "safePasswo0d*",
+        "PasswordNew": "PassSaf3à*"
+    })
+    headers = {
+        'Content-Type': 'application/json'
+    }
 
     response = requests.request("POST", url, headers=headers, data=payload)
 
@@ -169,27 +217,40 @@ def editPassword():
 
 
 def addNotification():
-    url = "http://20.234.168.103:8080/notification/testguy01/bienvenue/bienvenue/false"
+    url = "http://localhost:8080/AddNotification"
 
-    payload = {}
-    headers = {}
+    
+    payload = json.dumps({
+		"UserID": "testguy01",
+		"Title": "bienvenue",
+		"Content": "bienvenue",
+		"Status": "false"
+    })
+    headers = {
+        'Content-Type': 'application/json'
+    }
 
     response = requests.request("POST", url, headers=headers, data=payload)
 
     return response.text
 
 def delNotification():
-    url = "http://20.234.168.103:8080/notification/testguy01/bienvenue/"
+    url = "http://localhost:8080/DelNotification"
 
-    payload = {}
-    headers = {}
+    payload = json.dumps({
+		"UserID": "testguy01",
+		"Title": "bienvenue",
+    })
+    headers = {
+        'Content-Type': 'application/json'
+    }
 
     response = requests.request("POST", url, headers=headers, data=payload)
 
     return response.text
 
 def listNotification(user):
-    url = "http://20.234.168.103:8080/notification/"+ user
+    url = "http://localhost:8080/notification/"+ user
 
     payload = {}
     headers = {}
@@ -209,7 +270,10 @@ def listNotification(user):
 def account_creation():
     if login() != '{"failed":"404"}':
         print("Not OK, the account shoudn't exist before registration")
-        return 1
+        print("But I will try to delete the accounts")
+        a = delete_user()
+        print(a)
+        exit(1)
     if register() != '{"success":"200"}':
         print("ERROR : Registration")
         return 1
@@ -223,8 +287,11 @@ def account_creation():
 def profile_edition():
     register()
     update_profile()
-    if getProfile() != '{"profile":{"FullName":"MyFullNameTest","Description":"MyTestDescription","PhoneNb":"TestPhoneNB","Email":"myTest@email.com"}}':
+    resp = getProfile()
+    if resp != '{"profile":{"FullName":"MyFullNameTest","Description":"MyTestDescription","PhoneNb":"TestPhoneNB","Email":"myTest@email.com"}}':
         print("FAILED : Profile personalisation : ko")
+        print(resp)
+        delete_user()
         return 1
     delete_user()
     print("SUCCESS : Profile personalisation ok")
@@ -232,8 +299,8 @@ def profile_edition():
 
 def friendship():
     registerFriends()
-    listFriends('testguy01')
-    listFriends('testguy02')
+    # listFriends('testguy01')
+    # listFriends('testguy02')
     addFriend('add')
     replyFriend('accept')
     a = listFriends('testguy01')
@@ -242,6 +309,8 @@ def friendship():
 
     if a != '{"fetched":["testguy02"]}' or b != '{"fetched":["testguy01"]}':
         print("FAILED : Friendship : add : ko")
+        print(a)
+        print(b)
         return 1
 
     print('Success : Friendship : add : ok')
@@ -289,6 +358,7 @@ def event_creation():
 
     if a != b or a != '{"Success ":[{"Guests":"testguy01+testguy02","Date":"Demain soir","Subject":"bicyle","Confirmed":false}]}':
         print("FAILED : Event creation : ko")
+        deleteFriends()
         return 1
     deleteFriends()
     print("Success : Event creation : ok")
@@ -314,6 +384,8 @@ def addnotification():
     print(a)
     if not ("Success") in a:
         print("FAILED : Error add notification : ko")
+        print(a)
+        delete_user()
         return 1
     print("SUCCESS : add notification : ok")
     delete_user()
@@ -323,7 +395,9 @@ def delnotification():
     addNotification()
     a = delNotification()
     if not ("Success") in a:
+        print(a)
         print("FAILED : Error del notification : ko")
+        delete_user()
         return 1
     print("SUCCESS : del notification : ok")
     delete_user()
@@ -334,21 +408,144 @@ def getnotification():
     a = listNotification("testguy01")
     if not ("Success") in a:
         print("FAILED : Error get notification : ko")
+        delete_user()
         return 1
     print("SUCCESS : get notification : ok")
     delete_user()
 
+
+def addFeedback():
+    url = "http://localhost:8080/feedback"
+
+    payload = json.dumps({
+        "Username": "testguy01",
+        "Message": "J aime bien votre projet",
+        "Date": "En ce jour"
+    })
+    headers = {
+    'Content-Type': 'application/json'
+    }
+
+    response = requests.request("POST", url, headers=headers, data=payload)
+
+    return response.text
+
+
+def DelFeedback():
+    url = "http://localhost:8080/delFeedback"
+
+    payload = json.dumps({
+        "Username": "testguy01",
+        "Message": "J aime bien votre projet",
+    })
+    headers = {
+    'Content-Type': 'application/json'
+    }
+
+    response = requests.request("POST", url, headers=headers, data=payload)
+
+    return response.text
+
+
+def getFeedback():
+    url = "http://localhost:8080/feedback"
+
+    payload = {}
+    headers = {}
+
+    response = requests.request("GET", url, headers=headers, data=payload)
+
+    return response.text
+
+
+def feedback():
+    ExpectedOutput = '{"Username":"testguy01","Date":"En ce jour","Message":"J aime bien votre projet"}'
+    addFeedback()
+    resp = getFeedback()
+    if ExpectedOutput in resp:
+        print("YES")
+        DelFeedback()
+        pass
+    else:
+        print("FAILED : Feedback : ko")
+        return 1
+    # print(resp)
+
+
+def addReport():
+    url = "http://localhost:8080/report"
+
+    payload = json.dumps({
+        "Username": "testguy01",
+        "Message": "Je ne l aime pas",
+        "Date": "En ce jour"
+    })
+    headers = {
+    'Content-Type': 'application/json'
+    }
+
+    response = requests.request("POST", url, headers=headers, data=payload)
+
+    return response.text
+
+
+def getReport():
+    url = "http://localhost:8080/report"
+
+    payload = {}
+    headers = {}
+
+    response = requests.request("GET", url, headers=headers, data=payload)
+
+    return response.text
+
+
+def DelReport():
+    url = "http://localhost:8080/delReport"
+
+    payload = json.dumps({
+        "Username": "testguy01",
+        "Date": "en ce jour",
+    })
+    headers = {
+    'Content-Type': 'application/json'
+    }
+
+    response = requests.request("POST", url, headers=headers, data=payload)
+
+    return response.text
+
+
+def report():
+    ExpectedOutput = '{"Success":[{"Username":"testguy01","Date":"En ce jour","Message":"Je ne l aime pas"}]}'
+    addReport()
+    resp = getReport()
+    if ExpectedOutput in resp:
+        print("YES")
+        DelReport()
+        pass
+    else:
+        print("FAILED : Report : ko")
+        print(resp)
+        return 1
+    # print(resp)
+
+
+
 def test_all_scenari():
-    # account_creation()
-    # profile_edition()
-    # friendship()
-    # refuse_friendship()
-    # delete_friendship()
-    # event_creation()
-    # password_check()
-    # addnotification()
-    # delnotification()
-    # getnotification()
+    # account_creation() ## DONE
+    # profile_edition() ## DONE 
+    # friendship()  ## DONE
+    # refuse_friendship() ## Done 
+    # delete_friendship()  ## Done
+    # event_creation() ## DONE
+    # password_check()  ## DONE
+    # delete_user()
+    # addnotification()  ## Done
+    # delnotification()  ## Done
+    # getnotification()  ## DONE
+    # feedback()  ## Done
+    report()
     pass
 
 
