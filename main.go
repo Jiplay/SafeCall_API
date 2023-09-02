@@ -72,13 +72,13 @@ func main() {
 	r.GET("/conversations/:UserID", GetConversations)
 	r.GET("/messages/:UserID/:FriendID", GetMessages)
 
-	r.POST("/feedback", NewFeedback)
-	r.POST("/delFeedback", DelFeedback)
-	r.GET("/feedback", GetFeedback)
+	r.POST("/feedback", NewFeedback)    // Tested
+	r.POST("/delFeedback", DelFeedback) // Tested
+	r.GET("/feedback", GetFeedback)     // Tested
 
-	r.POST("/report", NewReport)
-	r.POST("/delReport", DelReports)
-	r.GET("/report", GetReports)
+	r.POST("/report", NewReport)     // Tested
+	r.POST("/delReport", DelReports) // Tested
+	r.GET("/report", GetReports)     // Tested
 
 	r.GET("/tryCall", sendCall)
 
