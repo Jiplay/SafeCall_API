@@ -24,7 +24,7 @@ func manageFriendEndpoint(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	url := "http://localhost:8081/friend" ///friend/%s/%s/%s", data.UserID, data.Friend, data.Action)
+	url := "http://profiler:8081/friend" ///friend/%s/%s/%s", data.UserID, data.Friend, data.Action)
 
 	requestBody := map[string]interface{}{
 		"UserID": data.UserID,
@@ -51,7 +51,7 @@ func replyFriendEndpoint(c *gin.Context) {
 		return
 	}
 
-	url := "http://localhost:8081/friendRequest"
+	url := "http://profiler:8081/friendRequest"
 
 	requestBody := map[string]interface{}{
 		"UserID": data.UserID,

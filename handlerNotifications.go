@@ -3,13 +3,13 @@ package main
 import "fmt"
 
 func GetNotification(userID string) string {
-	url := "http://localhost:8081/notification/" + userID
+	url := "http://profiler:8081/notification/" + userID
 	res := getDataProfiler(userID, url)
 	return res
 }
 
 func addNotificationHandler(UserID, Title, Content string, Status bool) string {
-	url := "http://localhost:8081/AddNotification"
+	url := "http://profiler:8081/AddNotification"
 
 	requestBody := map[string]interface{}{
 		"User":    UserID,
@@ -23,7 +23,7 @@ func addNotificationHandler(UserID, Title, Content string, Status bool) string {
 }
 
 func delNotificationHandler(UserID, Title string) string {
-	url := "http://localhost:8081/DelNotification"
+	url := "http://profiler:8081/DelNotification"
 	requestBody := map[string]interface{}{
 		"User":  UserID,
 		"Title": Title,

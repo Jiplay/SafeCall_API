@@ -114,7 +114,7 @@ func RegisterHandler(id, psw, email string) string { // TODO Ajouter un call au 
 	protoUser := userToProto(id, psw)
 	binary, _ := proto.Marshal(&protoUser)
 
-	url := "http://localhost:8081/create"
+	url := "http://profiler:8081/create"
 
 	requestBody := map[string]interface{}{
 		"Login": id,
@@ -150,7 +150,7 @@ func postProfileHandler(endpoint, userID, data string) string {
 		"Data":   data,
 	}
 
-	url := "http://localhost:8081/" + endpoint
+	url := "http://profiler:8081/" + endpoint
 	postDataProfiler(url, requestBody)
 	return "success"
 }
@@ -205,7 +205,7 @@ func deleteUserData(userID string) string {
 		"userID": userID,
 	}
 
-	resp := postDataProfiler("http://localhost:8081/delete", requestBody)
+	resp := postDataProfiler("http://profiler:8081/delete", requestBody)
 	return resp
 }
 

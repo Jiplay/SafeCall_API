@@ -79,7 +79,7 @@ func GetUsers(uri, database string) []bson.M {
 }
 
 func getProfile(userID string) string {
-	url := "http://localhost:8081/Profile" + "/" + userID
+	url := "http://profiler:8081/Profile" + "/" + userID
 
 	client := &http.Client{}
 	req, err := http.NewRequest("GET", url, nil)
@@ -111,7 +111,7 @@ func getProfile(userID string) string {
 }
 
 func searchNameQuery(username string) string {
-	url := "http://localhost:8081/search" + "/" + username
+	url := "http://profiler:8081/search" + "/" + username
 
 	client := &http.Client{}
 	req, err := http.NewRequest("GET", url, nil)
