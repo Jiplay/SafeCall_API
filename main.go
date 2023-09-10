@@ -80,6 +80,7 @@ func main() {
 	r.POST("/delReport", DelReports) // Tested
 	r.GET("/report", GetReports)     // Tested
 
+	r.GET("/setupProfiler", SetupProfiler)
 	r.GET("/tryCall", sendCall)
 
 	r.Run()
