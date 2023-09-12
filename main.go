@@ -54,7 +54,8 @@ func main() {
 	r.POST("/profileFullName", postFullName)       // TESTED
 	r.POST("/profilePhoneNB", postPhoneNB)         // TESTED
 	r.POST("/profileEmail", postEmail)             // TESTED
-	r.POST("/delete", deleteUser)                  // TESTED
+	r.POST("/profilePic", postProfilePic)
+	r.POST("/delete", deleteUser) // TESTED
 
 	r.POST("/manageFriend", manageFriendEndpoint) // TESTED
 	r.POST("/replyFriend", replyFriendEndpoint)   // TESTED

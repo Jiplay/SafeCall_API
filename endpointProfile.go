@@ -27,6 +27,11 @@ type PostEmailStruct struct {
 	Data   string `bson:"Data"`
 }
 
+type PostProfilePicStruct struct {
+	UserID string `bson:"UserID"`
+	Data   string `bson:"Data"`
+}
+
 func postDescription(c *gin.Context) {
 	var data PostDescriptionStruct
 	if err := c.ShouldBindJSON(&data); err != nil {
@@ -91,6 +96,24 @@ func postEmail(c *gin.Context) {
 	}
 
 	resp := postProfileHandler("Email", data.UserID, data.Data)
+	if resp != "success" {
+		c.JSON(503, gin.H{
+			"failed": resp,
+		})
+	} else {
+		c.JSON(200, gin.H{
+			"success": "200",
+		})
+	}
+}
+
+func postProfilePic(c *gin.Context) {
+	var data PostProfilePicStruct
+	if err := c.ShouldBindJSON(&data); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	resp := postProfileHandler("PhoneNB", data.UserID, data.Data)
 	if resp != "success" {
 		c.JSON(503, gin.H{
 			"failed": resp,

@@ -11,7 +11,6 @@ import (
 	"strings"
 
 	"github.com/google/uuid"
-	zmq "github.com/pebbe/zmq4"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -142,6 +141,9 @@ func postProfileHandler(endpoint, userID, data string) string {
 	if endpoint == "Email" && len(data) > 50 {
 		return "Too long Email"
 	}
+	if endpoint == "ProfilePic" && len(data) > 150 {
+		return "Too long ProfilePic"
+	}
 
 	data = checkForBannedWords(data)
 
@@ -182,20 +184,20 @@ func searchName(userID string) string {
 func sendCallService(senter, dest string) bool {
 	//  Socket to talk to server
 	fmt.Println("Connecting to hello world server...")
-	requester, _ := zmq.NewSocket(zmq.PAIR)
-	defer requester.Close()
-	requester.Connect("tcp://localhost:5000")
+	// requester, _ := zmq.NewSocket(zmq.PAIR)
+	// defer requester.Close()
+	// requester.Connect("tcp://localhost:5000")
 
-	for request_nbr := 0; request_nbr != 10; request_nbr++ {
-		// send hello
-		msg := fmt.Sprintf("Hello %d", request_nbr)
-		fmt.Println("Sending ", msg)
-		requester.Send(msg, 0)
+	// for request_nbr := 0; request_nbr != 10; request_nbr++ {
+	// 	// send hello
+	// 	msg := fmt.Sprintf("Hello %d", request_nbr)
+	// 	fmt.Println("Sending ", msg)
+	// 	requester.Send(msg, 0)
 
-		// Wait for reply:
-		reply, _ := requester.Recv(0)
-		fmt.Println("Received ", reply)
-	}
+	// 	// Wait for reply:
+	// 	reply, _ := requester.Recv(0)
+	// 	fmt.Println("Received ", reply)
+	// }
 
 	return true
 }
