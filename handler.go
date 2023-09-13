@@ -11,6 +11,7 @@ import (
 	"strings"
 
 	"github.com/google/uuid"
+	zmq "github.com/pebbe/zmq4"
 	"google.golang.org/protobuf/proto"
 )
 
