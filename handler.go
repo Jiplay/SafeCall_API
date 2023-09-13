@@ -11,7 +11,6 @@ import (
 	"strings"
 
 	"github.com/google/uuid"
-	zmq "github.com/pebbe/zmq4"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -141,6 +140,9 @@ func postProfileHandler(endpoint, userID, data string) string {
 	}
 	if endpoint == "Email" && len(data) > 50 {
 		return "Too long Email"
+	}
+	if endpoint == "ProfilePic" && len(data) > 150 {
+		return "Too long ProfilePic"
 	}
 
 	data = checkForBannedWords(data)
