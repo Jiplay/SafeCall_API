@@ -184,20 +184,20 @@ func searchName(userID string) string {
 func sendCallService(senter, dest string) bool {
 	//  Socket to talk to server
 	fmt.Println("Connecting to hello world server...")
-	// requester, _ := zmq.NewSocket(zmq.PAIR)
-	// defer requester.Close()
-	// requester.Connect("tcp://profiler:5000")
+	requester, _ := zmq.NewSocket(zmq.PAIR)
+	defer requester.Close()
+	requester.Connect("tcp://audio:5555") // Audio bc we want to talk with this docker container --> docker ps
 
-	// for request_nbr := 0; request_nbr != 10; request_nbr++ {
-	// 	// send hello
-	// 	msg := fmt.Sprintf("Hello %d", request_nbr)
-	// 	fmt.Println("Sending ", msg)
-	// 	requester.Send(msg, 0)
+	for request_nbr := 0; request_nbr != 10; request_nbr++ {
+		// send hello
+		msg := fmt.Sprintf("Hello %d", request_nbr)
+		fmt.Println("Sending ", msg)
+		requester.Send(msg, 0)
 
-	// 	// Wait for reply:
-	// 	reply, _ := requester.Recv(0)
-	// 	fmt.Println("Received ", reply)
-	// }
+		// Wait for reply:
+		reply, _ := requester.Recv(0)
+		fmt.Println("Received ", reply)
+	}
 
 	return true
 }
