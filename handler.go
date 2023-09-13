@@ -186,7 +186,7 @@ func sendCallService(senter, dest string) bool {
 	fmt.Println("Connecting to hello world server...")
 	// requester, _ := zmq.NewSocket(zmq.PAIR)
 	// defer requester.Close()
-	// requester.Connect("tcp://localhost:5000")
+	// requester.Connect("tcp://profiler:5000")
 
 	// for request_nbr := 0; request_nbr != 10; request_nbr++ {
 	// 	// send hello

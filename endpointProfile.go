@@ -113,7 +113,7 @@ func postProfilePic(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	resp := postProfileHandler("PhoneNB", data.UserID, data.Data)
+	resp := postProfileHandler("ProfilePic", data.UserID, data.Data)
 	if resp != "success" {
 		c.JSON(503, gin.H{
 			"failed": resp,

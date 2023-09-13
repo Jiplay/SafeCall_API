@@ -20,6 +20,5 @@ func NewProfile(fullName, description, phoneNB, email, profilePic string) Profil
 
 func StringToProfile(input string) Profile {
 	data := strings.Split(input, "\"")
-
-	return Profile{data[5], data[9], data[13], data[17], data[21]}
+	return Profile{data[5], data[9], data[13], data[17], data[23]}
 }
