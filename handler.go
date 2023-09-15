@@ -191,7 +191,7 @@ func sendCallService(senter, dest string) bool {
 
 	for request_nbr := 0; request_nbr != 10; request_nbr++ {
 		// send hello
-		msg := fmt.Sprintf("Hello %d", request_nbr)
+		msg := fmt.Sprintf("Hello %d NEW ROOM: IP: 127.0.0.1,  XXX.XXX.XX, 124.10.10.2", request_nbr)
 		fmt.Println("Sending ", msg)
 		requester.Send(msg, 0)
 
