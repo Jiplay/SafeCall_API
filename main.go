@@ -63,6 +63,7 @@ func main() {
 
 	r.POST("/addEvent", addEventEndpoint)          // TESTED
 	r.POST("/delEvent", delEventEndpoint)          // TESTED
+	r.POST("/confirmEvent", confirmEvent)          // TESTED
 	r.GET("/listEvent/:userID", listEventEndpoint) // TESTED
 
 	r.POST("/AddNotification", addNotificationEndpoint) // FIXME Inform Front TESTED

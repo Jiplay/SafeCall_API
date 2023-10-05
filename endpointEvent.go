@@ -19,6 +19,13 @@ type PostDelEventStruct struct {
 	Date   string `bson:"Date"`
 }
 
+type ConfirmEventStruct struct {
+	Guests  string `bson:"Guests"`
+	Date    string `bson:"Date"`
+	Subject string `bson:"Subject"`
+	Status  bool   `bson:"Status"`
+}
+
 func addEventEndpoint(c *gin.Context) {
 	var data PostAddEventStruct
 	if err := c.ShouldBindJSON(&data); err != nil {
@@ -54,5 +61,19 @@ func listEventEndpoint(c *gin.Context) {
 
 	c.JSON(200, gin.H{
 		"Success ": a,
+	})
+}
+
+func confirmEvent(c *gin.Context) {
+	var data ConfirmEventStruct
+	if err := c.ShouldBindJSON(&data); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	resp := confirmEventHandler(data)
+
+	c.JSON(200, gin.H{
+		"Success ": resp,
 	})
 }

@@ -32,6 +32,20 @@ func delEventHandler(guest1, guest2, date string) string {
 	return resp
 }
 
+func confirmEventHandler(data ConfirmEventStruct) string {
+	url := "http://localhost:8081/confirmEvent"
+
+	requestBody := map[string]interface{}{
+		"Guests":  data.Guests,
+		"Date":    data.Date,
+		"Subject": data.Subject,
+		"Status":  data.Status,
+	}
+
+	resp := postDataProfiler(url, requestBody)
+	return resp
+}
+
 func listEventHandler(userID string) []Event {
 	resp := getDataProfiler(userID, "http://profiler:8081/listEvent/"+userID)
 	var events []Event
