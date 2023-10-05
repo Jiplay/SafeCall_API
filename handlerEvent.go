@@ -33,7 +33,7 @@ func delEventHandler(guest1, guest2, date string) string {
 }
 
 func confirmEventHandler(data ConfirmEventStruct) string {
-	url := "http://localhost:8081/confirmEvent"
+	url := "http://profiler:8081/confirmEvent"
 
 	requestBody := map[string]interface{}{
 		"Guests":  data.Guests,
