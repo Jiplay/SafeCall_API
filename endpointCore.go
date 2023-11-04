@@ -32,6 +32,11 @@ type RegisterStruct struct {
 	Email    string `bson:"Email"`
 }
 
+type LoginStruct struct {
+	Login    string `bson:"Login"`
+	Password string `bson:"Password"`
+}
+
 type DeleteUserStruct struct {
 	UserID string `bson:"UserID"`
 }
@@ -50,10 +55,16 @@ func deleteUser(c *gin.Context) {
 }
 
 func login(c *gin.Context) {
-	login := c.Param("login")
-	psw := c.Param("psw")
+	var data LoginStruct
+	if err := c.ShouldBindJSON(&data); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 
-	resp := LoginHandler(login, psw)
+	// login := c.Param("login")
+	// psw := c.Param("psw")
+
+	resp := LoginHandler(data.Login, data.Password)
 
 	if resp == "failed" {
 		c.JSON(404, gin.H{

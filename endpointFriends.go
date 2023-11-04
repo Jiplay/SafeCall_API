@@ -7,15 +7,17 @@ import (
 )
 
 type ManageFriendStruct struct {
-	UserID string `bson:"UserID"`
-	Friend string `bson:"Friend"`
-	Action string `bson:"Action"`
+	UserID  string `bson:"UserID"`
+	Friend  string `bson:"Friend"`
+	Subject string `bson:"Subject"`
+	Action  string `bson:"Action"`
 }
 
 type ReplyFriendStruct struct {
-	UserID string `bson:"UserID"`
-	Friend string `bson:"Friend"`
-	Action string `bson:"Action"`
+	UserID  string `bson:"UserID"`
+	Friend  string `bson:"Friend"`
+	Subject string `bson:"Subject"`
+	Action  string `bson:"Action"`
 }
 
 func manageFriendEndpoint(c *gin.Context) {
@@ -24,12 +26,13 @@ func manageFriendEndpoint(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	url := "http://profiler:8081/friend" ///friend/%s/%s/%s", data.UserID, data.Friend, data.Action)
+	url := "http://profiler:8081/friend"
 
 	requestBody := map[string]interface{}{
-		"UserID": data.UserID,
-		"Dest":   data.Friend,
-		"Action": data.Action,
+		"UserID":  data.UserID,
+		"Dest":    data.Friend,
+		"Subject": data.Subject,
+		"Action":  data.Action,
 	}
 
 	resp := actionFriendHandler(url, requestBody)
@@ -54,9 +57,10 @@ func replyFriendEndpoint(c *gin.Context) {
 	url := "http://profiler:8081/friendRequest"
 
 	requestBody := map[string]interface{}{
-		"UserID": data.UserID,
-		"Dest":   data.Friend,
-		"Action": data.Action,
+		"UserID":  data.UserID,
+		"Dest":    data.Friend,
+		"Subject": data.Subject,
+		"Action":  data.Action,
 	}
 
 	resp := actionFriendHandler(url, requestBody)

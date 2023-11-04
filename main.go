@@ -25,7 +25,6 @@ func CORS() gin.HandlerFunc {
 
 func main() {
 	r := gin.Default()
-	// r.Use(CORS())
 
 	r.Use(func(c *gin.Context) {
 		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
@@ -40,7 +39,7 @@ func main() {
 		c.Next()
 	})
 
-	r.GET("/login/:login/:psw", login)        // TESTED
+	r.POST("/login", login)                   // TESTED
 	r.GET("/profile/:userID", getUserProfile) // TESTED
 	r.GET("/search/:userID", SearchNameEndpoint)
 

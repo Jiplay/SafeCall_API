@@ -4,6 +4,10 @@ The API is the entrypoint of the server.
 
 For now, it can manages 2 routes : 
 
+# Documentation autogénéré Swagger
+
+swagger-codegen generate -i doc.yaml -l html
+
 GET Login :
 ex : http://localhost:8080/login?name=Ju&psw=******
 
