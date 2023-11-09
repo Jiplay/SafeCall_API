@@ -17,7 +17,7 @@ func actionFriendHandler(url string, body map[string]interface{}) bool {
 }
 
 func getFriends(userID string) []Friends {
-	resp := getDataProfiler(userID, "http://localhost:8081/friends/"+userID)
+	resp := getDataProfiler(userID, "http://profiler:8081/friends/"+userID)
 
 	var friends []Friends
 	err := json.Unmarshal([]byte(resp[12:len(resp)-1]), &friends)
