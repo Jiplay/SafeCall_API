@@ -34,7 +34,11 @@ func GetMessagesHandler(userID, friendID string) []Messages {
 func PostMessageHandler(userID, friendID, message string) {
 	safeMessage := checkForBannedWords(message)
 	fmt.Println(safeMessage)
-	// url := "http://facteur:3000/send_message"
-	// postFacteur(url, userID, friendID, message)
+	url := "http://facteur:3000/send_message"
+	postFacteur(url, userID, friendID, safeMessage)
+}
 
+func DelRoomHandler(room string) {
+	url := "http://facteur:3000/del_room/" + room
+	getDataProfiler("", url)
 }

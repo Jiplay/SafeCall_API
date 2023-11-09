@@ -12,6 +12,10 @@ type PostMessageStruct struct {
 	Message    string `bson:"Message"`
 }
 
+type PostDelRoomStruct struct {
+	Room string `bson:"Room"`
+}
+
 func GetConversations(c *gin.Context) {
 	userID := c.Param("UserID")
 	resp := GetConversation(userID)
@@ -38,6 +42,15 @@ func PostMessage(c *gin.Context) {
 		return
 	}
 	PostMessageHandler(data.Username, data.Friendname, data.Message)
+
+	c.JSON(200, gin.H{
+		"Success ": "True",
+	})
+}
+
+func DelMessage(c *gin.Context) {
+	room := c.Param("room")
+	DelRoomHandler(room)
 
 	c.JSON(200, gin.H{
 		"Success ": "True",
