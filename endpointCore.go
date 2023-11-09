@@ -61,9 +61,6 @@ func login(c *gin.Context) {
 		return
 	}
 
-	// login := c.Param("login")
-	// psw := c.Param("psw")
-
 	resp := LoginHandler(data.Login, data.Password)
 
 	if resp == "failed" {

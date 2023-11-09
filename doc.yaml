@@ -1,48 +1,606 @@
 openapi: 3.0.0
 info:
-  title: Mon API
+  title: My API
   version: 1.0.0
+  description: API documentation for SafeCall.
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+servers:
+  - url: http://20.234.168.103:8080/
 paths:
   /login:
     post:
-      summary: Login into the app
+      summary: User login
+      description: Logs in a user with the provided credentials.
       requestBody:
-        description: Données de l'utilisateur
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Utilisateur'
-    post:
-      summary: Créer un nouvel utilisateur
-      requestBody:
-        description: Données de l'utilisateur
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Utilisateur'
-  /utilisateur/{id}:
-    get:
-      summary: Récupérer un utilisateur par ID
-      parameters:
-        - name: id
-          in: path
-          required: true
-          description: ID de l'utilisateur
-          schema:
-            type: integer
+              type: object
+              properties:
+                Login:
+                  type: string
+                Password:
+                  type: string
       responses:
         '200':
-          description: Succès
+          description: Login successful
+        '404':
+          description: Unauthorized
+
+  '/profile/{userID}':
+    parameters:
+      - name: userID
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      summary: Get User Profile
+      description: Get all user Data stored in their Profile
+      responses:
+        '200':
+          description: Profile Data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
+  '/search/{userID}':
+    parameters:
+      - name: userID
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      summary: Auto-completion search
+      description: Perform auto-completion during a search
+      responses:
+        '200':
+          description: Auto-completion results
+  /forgetPassword:
+    post:
+      summary: Forget Password
+      description: First step of password recuperation process
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                Email:
+                  type: string
+      responses:
+        '200':
+          description: Email Match
+        '403':
+          description: Email doesn't match
+  /forgetPasswordCode:
+    post:
+      summary: Forget Password Code
+      description: Second step of password recuperation process, the code has been sent by e-mail, has to be fill in this endpoint
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                Email:
+                  type: string
+                Code:
+                  type: string
+      responses:
+        '200':
+          description: Code Match
+        '404':
+          description: Code doesn't match
+  /setPassword:
+    post:
+      summary: Set Password
+      description: Last step of password recuperation process, the code has been accepted and the user can change its password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                Email:
+                  type: string
+                Password:
+                  type: string
+      responses:
+        '200':
+          description: Code Match
+        '404':
+          description: Code doesn't match
+  /editPassword:
+    post:
+      summary: Edit Password
+      description: Change password if you know your last password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                Email:
+                  type: string
+                Password:
+                  type: string
+      responses:
+        '200':
+          description: Password Match
+        '403':
+          description: password doesn't match
+  /register:
+    post:
+      summary: Register
+      description: Register New User
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                Login:
+                  type: string
+                Password:
+                  type: string
+                Email:
+                  type: string
+      responses:
+        '200':
+          description: email and Login are unique
+        '403':
+          description: email and Login are not unique
+  /profileDescription:
+    post:
+      summary: profileDescription
+      description: Allow users to change their descriptions
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                UserID:
+                  type: string
+                Data:
+                  type: string
+      responses:
+        '200':
+          description: Working
+        '503':
+          description: Didn't work
+  /profileFullName:
+    post:
+      summary: profileFullName
+      description: Allow users to change their FullName displayed
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                UserID:
+                  type: string
+                Data:
+                  type: string
+      responses:
+        '200':
+          description: Working
+        '503':
+          description: Didn't work
+  /profilePhoneNB:
+    post:
+      summary: profilePhoneNB
+      description: Allow users to change their Phone NB
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                UserID:
+                  type: string
+                Data:
+                  type: string
+      responses:
+        '200':
+          description: Working
+        '503':
+          description: Didn't work
+  /profileEmail:
+    post:
+      summary: profileEmail
+      description: Allow users to change their email address
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                UserID:
+                  type: string
+                Data:
+                  type: string
+      responses:
+        '200':
+          description: Working
+        '503':
+          description: Didn't work
+  /profilePic:
+    post:
+      summary: profilePic
+      description: Allow users to change their profile pictures
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                UserID:
+                  type: string
+                Data:
+                  type: string
+      responses:
+        '200':
+          description: Working
+        '503':
+          description: Didn't work
+  /delete:
+    post:
+      summary: delete
+      description: Allow users to delete their account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                UserID:
+                  type: string
+      responses:
+        '200':
+          description: Working
+  /manageFriend:
+    post:
+      summary: manageFriend
+      description: Allow users to send friend request or delete their friends
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                UserID:
+                  type: string
+                Dest:
+                  type: string
+                Subject:
+                  type: string
+                Action:
+                  type: string
+      responses:
+        '200':
+          description: Working
+        '503':
+          description: Failed
+  /replyFriend:
+    post:
+      summary: replyFriend
+      description: Allow users to send accept or deny friend request
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                UserID:
+                  type: string
+                Friend:
+                  type: string
+                Subject:
+                  type: string
+                Action:
+                  type: string
+      responses:
+        '200':
+          description: Working
+        '503':
+          description: Failed
+  '/listFriends/{userID}':
+    parameters:
+      - name: userID
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      summary: Get friends
+      description: Return all friends of the user
+      responses:
+        '200':
+          description: Friend Usernames
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+  /AddNotification:
+    post:
+      summary: AddNotification
+      description: Add a notification to the user Profile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                UserID:
+                  type: string
+                Title:
+                  type: string
+                Content:
+                  type: string
+                Status:
+                  type: string
+      responses:
+        '200':
+          description: Working
+  /DelNotification:
+    post:
+      summary: DelNotification
+      description: Delete a notification to the user Profile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                UserID:
+                  type: string
+                Title:
+                  type: string
+                Content:
+                  type: string
+                Status:
+                  type: string
+      responses:
+        '200':
+          description: Working
+  '/notification/{userID}':
+    parameters:
+      - name: userID
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      summary: Get Notification
+      description: Return all notification of the user
+      responses:
+        '200':
+          description: Friend Usernames
+          content:
+            application/json:
+                items:
+                  type: string
+  /sendMessage:
+    post:
+      summary: sendMessage
+      description: Send a text message to another user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                Username:
+                  type: string
+                Friendname:
+                  type: string
+                Message:
+                  type: string
+      responses:
+        '200':
+          description: Working
+  '/conversations/{userID}':
+    parameters:
+      - name: userID
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      summary: Get Conversations
+      description: Return all conversations of the user
+      responses:
+        '200':
+          description: Conversations name
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+  '/messages/{userID}/{FriendID}':
+    parameters:
+      - name: userID
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: FriendID
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      summary: Get Conversation
+      description: Return the conversations of the 2 users
+      responses:
+        '200':
+          description: Conversations name
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+  /feedback:
+    post:
+      summary: feedback
+      description: Send a feedback to SafeCall
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                Username:
+                  type: string
+                Date:
+                  type: string
+                Message:
+                  type: string
+      responses:
+        '200':
+          description: Working
+  /delFeedback:
+    post:
+      summary: feedback
+      description: Delete a feedback 
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                Username:
+                  type: string
+                Date:
+                  type: string
+      responses:
+        '200':
+          description: Working
+
+  '/feedback':
+    get:
+      summary: Get Feedback
+      description: Return all the feedback
+      responses:
+        '200':
+          description: Feedback Object
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+  /report:
+    post:
+      summary: report
+      description: send a report 
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                Username:
+                  type: string
+                Date:
+                  type: string
+                Message:
+                  type: string
+      responses:
+        '200':
+          description: Working
+  /delFeedback:
+    post:
+      summary: feedback
+      description: delete a feedback 
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                Username:
+                  type: string
+                Date:
+                  type: string
+      responses:
+        '200':
+          description: Working
+  '/report':
+    get:
+      summary: Get Report
+      description: Get All the report
+      responses:
+        '200':
+          description: Report Object
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
 components:
   schemas:
-    Utilisateur:
+    Profile:
       type: object
       properties:
-        id:
-          type: integer
-        nom:
+        FullName:
           type: string
-        email:
+        Description:
           type: string
+        PhoneNb:
+          type: string
+        Email:
+          type: string
+        ProfilePic:
+          type: string
+    Message:
+      type: object
+      properties:
+        Sender:
+          type: string
+        Message:
+          type: string
+        Heure:
+          type: string
+    Feedback:
+      type: object
+      properties:
+        Username:
+          type: string
+        Message:
+          type: string
+        Date:
+          type: string
+

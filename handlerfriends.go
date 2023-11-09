@@ -1,27 +1,30 @@
 package main
 
 import (
-	"strings"
+	"encoding/json"
+	"fmt"
 )
+
+type Friends struct {
+	Id      string `bson:"Id"`
+	Subject string `bson:"Subject"`
+	Active  bool   `bson:"Active"`
+}
 
 func actionFriendHandler(url string, body map[string]interface{}) bool {
 	postDataProfiler(url, body)
 	return true
 }
 
-func getFriends(userID string) []string {
-	results := getDataProfiler(userID, "http://profiler:8081/friends/"+userID)
+func getFriends(userID string) []Friends {
+	resp := getDataProfiler(userID, "http://localhost:8081/friends/"+userID)
 
-	dest := strings.Split(results, ":")
-	s := strings.ReplaceAll(dest[1], ",", "")
-	a := strings.Split(s[:len(s)-2], "\"")
-
-	for i := 0; i < len(a); i++ {
-		if a[i] == "" {
-			a = append(a[:i], a[i+1:]...)
-			i--
-		}
+	var friends []Friends
+	err := json.Unmarshal([]byte(resp[12:len(resp)-1]), &friends)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return nil
 	}
 
-	return a[1:]
+	return friends
 }

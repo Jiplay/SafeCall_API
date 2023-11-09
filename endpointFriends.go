@@ -77,9 +77,9 @@ func replyFriendEndpoint(c *gin.Context) {
 
 func listFriends(c *gin.Context) {
 	userID := c.Param("userID")
-	resp := getFriends(userID)
 
+	friends := getFriends(userID)
 	c.JSON(200, gin.H{
-		"fetched": resp,
+		"fetched": friends,
 	})
 }
