@@ -40,5 +40,5 @@ func PostMessageHandler(userID, friendID, message string) {
 
 func DelRoomHandler(room string) {
 	url := "http://facteur:3000/del_room/" + room
-	getDataProfiler("", url)
+	getDataProfiler(url)
 }

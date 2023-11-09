@@ -47,7 +47,7 @@ func confirmEventHandler(data ConfirmEventStruct) string {
 }
 
 func listEventHandler(userID string) []Event {
-	resp := getDataProfiler(userID, "http://profiler:8081/listEvent/"+userID)
+	resp := getDataProfiler("http://profiler:8081/listEvent/" + userID)
 	var events []Event
 	err := json.Unmarshal([]byte(resp[12:len(resp)-1]), &events)
 	if err != nil {

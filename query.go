@@ -179,7 +179,7 @@ func editLoginInfo(uri, finder, new string, endpoint int) bool {
 	return err == nil
 }
 
-func getDataProfiler(userID, url string) string {
+func getDataProfiler(url string) string {
 	client := &http.Client{}
 	req, err := http.NewRequest("GET", url, nil)
 
@@ -378,6 +378,52 @@ func DeleteFeedback(uri string, username string, date string) bool {
 
 	if result.DeletedCount == 0 {
 		fmt.Println("No feedback deleted")
+		return false
+	}
+
+	return true
+}
+
+func UpdateFeedback(uri string, username string, date string, state string) bool {
+	client, err := mongo.NewClient(options.Client().ApplyURI(uri))
+	if err != nil {
+		log.Fatal(err)
+		return false
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	err = client.Connect(ctx)
+	if err != nil {
+		log.Fatal(err)
+		return false
+	}
+
+	defer client.Disconnect(ctx)
+
+	database := client.Database("Support")
+	collection := database.Collection("Feedback")
+
+	filter := bson.M{
+		"Username": username,
+		"Date":     date,
+	}
+
+	update := bson.M{
+		"$set": bson.M{
+			"Status": state,
+		},
+	}
+
+	result, err := collection.UpdateOne(ctx, filter, update)
+	if err != nil {
+		fmt.Println("Failed to update feedback:", err)
+		return false
+	}
+
+	if result.MatchedCount == 0 {
+		fmt.Println("No feedback found to update")
 		return false
 	}
 

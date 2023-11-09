@@ -4,7 +4,7 @@ import "fmt"
 
 func GetNotification(userID string) string {
 	url := "http://profiler:8081/notification/" + userID
-	res := getDataProfiler(userID, url)
+	res := getDataProfiler(url)
 	return res
 }
 

@@ -74,7 +74,8 @@ func main() {
 	r.GET("/messages/:UserID/:FriendID", GetMessages)
 	r.GET("/delRoom/:room", DelMessage)
 
-	r.POST("/feedback", NewFeedback)    // Tested
+	r.POST("/feedback", NewFeedback) // Tested
+	r.POST("/editFeedback", EditFeedbackEndpoint)
 	r.POST("/delFeedback", DelFeedback) // Tested
 	r.GET("/feedback", GetFeedback)     // Tested
 
