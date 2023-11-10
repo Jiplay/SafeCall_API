@@ -287,6 +287,7 @@ func getAllConvQuery(url string) []string {
 	}
 
 	var dat []string
+	fmt.Println("BODY get conv: ", body)
 	if err := json.Unmarshal(body, &dat); err != nil {
 		panic(err)
 	}
