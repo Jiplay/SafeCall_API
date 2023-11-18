@@ -4,24 +4,10 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"golang.org/x/crypto/acme/autocert"
 )
 
 // This function is here for test purpose with Postman
-func CORS() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
-		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
-		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With")
-		c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT, DELETE")
-
-		if c.Request.Method == "OPTIONS" {
-			c.AbortWithStatus(204)
-			return
-		}
-
-		c.Next()
-	}
-}
 
 func main() {
 	r := gin.Default()
@@ -38,6 +24,21 @@ func main() {
 
 		c.Next()
 	})
+
+	// Chemin vers les fichiers de certificat et de clé privée
+	certFile := "cert.pem"
+	keyFile := "key.unencrypted.pem" // Password : safecall
+
+	// Utilisez autocert pour la gestion automatique des certificats (let's encrypt)
+	// En production, remplacez le domaine factice par votre propre domaine
+	m := autocert.Manager{
+		Prompt:     autocert.AcceptTOS,
+		HostPolicy: autocert.HostWhitelist("*"),
+		Cache:      autocert.DirCache("certs"), // Emplacement pour stocker les certificats
+	}
+
+	// Lancez le serveur avec la gestion automatique des certificats
+	go http.ListenAndServe(":80", m.HTTPHandler(nil))
 
 	r.POST("/login", login)                   // TESTED
 	r.GET("/profile/:userID", getUserProfile) // TESTED
@@ -86,5 +87,7 @@ func main() {
 	r.GET("/setupProfiler", SetupProfiler)
 	r.GET("/tryCall", sendCall)
 
-	r.Run()
+	r.RunTLS(":8080", certFile, keyFile)
 }
+
+// http.ListenAndServeTLS(":443", certFile, keyFile, r)
