@@ -16,6 +16,19 @@ func main() {
 	// Créer un routeur Gin
 	r := gin.New()
 
+	r.Use(func(c *gin.Context) {
+		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+		c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+
+		if c.Request.Method == "OPTIONS" {
+			c.AbortWithStatus(http.StatusOK)
+			return
+		}
+
+		c.Next()
+	})
+
 	// Ajouter des routes
 	r.GET("/api/hello", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"message": "Hello, World!"})
