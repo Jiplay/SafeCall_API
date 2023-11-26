@@ -10,6 +10,14 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+func acmeFunc(c *gin.Context) {
+	content := "BFC6fpqFp_I8y5cwOCKU11y_7xg2416coKCHPKfNjTM.clTE2bdjTGolWDmWXCivTvIFXqCv6e-Fb8n5oZ-FA9c"
+
+	// Répondre avec le contenu du fichier
+	c.Data(http.StatusOK, "text/plain", []byte(content))
+
+}
+
 func main() {
 	// Utiliser le mode Release pour la production
 	gin.SetMode(gin.ReleaseMode)
@@ -38,6 +46,8 @@ func main() {
 	r.GET("/api/hello", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"message": "Hello, World!"})
 	})
+
+	r.GET("/.well-known/acme-challenge/:data", acmeFunc)
 
 	r.POST("/login", login)                   // TESTED
 	r.GET("/profile/:userID", getUserProfile) // TESTED
@@ -92,7 +102,7 @@ func main() {
 	keyFile := "key.unencrypted.pem"
 
 	// Configurer le serveur HTTP
-	portHTTP := 7070
+	portHTTP := 80
 
 	var wg sync.WaitGroup
 
