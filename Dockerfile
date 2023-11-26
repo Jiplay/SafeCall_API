@@ -16,6 +16,6 @@ RUN ./build.sh
 # COPY --from=build /src/api .
 # COPY --from=build /src/config.json .
 
-EXPOSE 8080
+EXPOSE 80
 
 CMD [ "./api" ]
