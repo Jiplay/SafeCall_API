@@ -11,7 +11,7 @@ import (
 )
 
 func acmeFunc(c *gin.Context) {
-	content := "PhXNIH3H3iYC2P-PsrkcpwpdwaVD-3oNBpfF6lEmSok.o3JButVYNDQQmKDWOGrMKQf8ghw5jdMzdoDHOx2n-7o"
+	content := "FzevAlxqxAFFyS97EBQ0A9d754RkAv7XJUuTHJyazRQ.clTE2bdjTGolWDmWXCivTvIFXqCv6e-Fb8n5oZ-FA9c"
 
 	// Répondre avec le contenu du fichier
 	c.Data(http.StatusOK, "text/plain", []byte(content))
