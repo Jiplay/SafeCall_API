@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM golang:1.17-alpine AS build
+FROM golang:1.20-alpine AS build
 
 WORKDIR /src
 RUN export GO111MODULE="on"
