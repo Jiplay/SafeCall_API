@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"sync"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -15,19 +16,23 @@ func main() {
 
 	// Créer un routeur Gin
 	r := gin.New()
+	config := cors.DefaultConfig()
+	config.AllowOrigins = []string{"https://safecall-web.vercel.app"} // Remplacez par vos origines autorisées
+	config.AllowMethods = []string{"GET", "POST", "OPTIONS", "PUT", "DELETE"}
+	r.Use(cors.New(config))
 
-	r.Use(func(c *gin.Context) {
-		c.Writer.Header().Set("Access-Control-Allow-Origin", "https://safecall-web.vercel.app")
-		c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
-		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+	// r.Use(func(c *gin.Context) {
+	// 	c.Writer.Header().Set("Access-Control-Allow-Origin", "https://safecall-web.vercel.app")
+	// 	c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+	// 	c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
 
-		if c.Request.Method == "OPTIONS" {
-			c.AbortWithStatus(http.StatusOK)
-			return
-		}
+	// 	if c.Request.Method == "OPTIONS" {
+	// 		c.AbortWithStatus(http.StatusOK)
+	// 		return
+	// 	}
 
-		c.Next()
-	})
+	// 	c.Next()
+	// })
 
 	// Ajouter des routes
 	r.GET("/api/hello", func(c *gin.Context) {
