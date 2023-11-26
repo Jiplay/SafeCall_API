@@ -42,11 +42,6 @@ func main() {
 	// 	c.Next()
 	// })
 
-	// Ajouter des routes
-	r.GET("/api/hello", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"message": "Hello, World!"})
-	})
-
 	r.GET("/.well-known/acme-challenge/:data", acmeFunc)
 
 	r.POST("/login", login)                   // TESTED
@@ -97,9 +92,9 @@ func main() {
 	r.GET("/tryCall", sendCall)
 
 	// Configurer le serveur HTTPS
-	portHTTPS := 8080
-	certFile := "cert.pem"
-	keyFile := "key.unencrypted.pem"
+	portHTTPS := 443
+	certFile := "certificates/cert.pem"
+	keyFile := "certificates/privkey.pem"
 
 	// Configurer le serveur HTTP
 	portHTTP := 80
