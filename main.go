@@ -25,7 +25,7 @@ func main() {
 	// Créer un routeur Gin
 	r := gin.New()
 	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{"https://safecall-web.vercel.app"} // Remplacez par vos origines autorisées
+	config.AllowOrigins = []string{"*"} // Remplacez par vos origines autorisées
 	config.AllowMethods = []string{"GET", "POST", "OPTIONS", "PUT", "DELETE"}
 	r.Use(cors.New(config))
 
