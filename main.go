@@ -8,6 +8,7 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	socketio "github.com/googollee/go-socket.io"
 )
 
 func acmeFunc(c *gin.Context) {
@@ -18,14 +19,90 @@ func acmeFunc(c *gin.Context) {
 
 }
 
+// package main
+
+// import (
+// 	"log"
+// 	"net/http"
+
+// 	socketio "github.com/googollee/go-socket.io"
+// 	"github.com/gin-gonic/gin"
+// )
+
+// func main() {
+// 	r := gin.Default()
+// 	server, err := socketio.NewServer(nil)
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+
+// 	server.OnConnect("/", func(s socketio.Conn) error {
+// 		log.Println("a user connected")
+// 		s.Emit("me", s.ID())
+// 		return nil
+// 	})
+
+// 	server.OnDisconnect("/", func(s socketio.Conn, _ string) {
+// 		log.Println("a user disconnected")
+// 		s.BroadcastTo("/", "callEnded")
+// 	})
+
+// 	server.OnEvent("/", "callUser", func(s socketio.Conn, data map[string]interface{}) {
+// 		log.Println("user to call:", data["userToCall"])
+// 		targetSocketID := data["userToCall"].(string)
+// 		server.BroadcastTo(targetSocketID, "callUser", map[string]interface{}{
+// 			"signal": data["signalData"],
+// 			"from":   data["from"],
+// 		})
+// 	})
+
+// 	server.OnEvent("/", "answerCall", func(s socketio.Conn, data map[string]interface{}) {
+// 		log.Println("answer to:", data["to"])
+// 		targetSocketID := data["to"].(string)
+// 		server.BroadcastTo(targetSocketID, "callAccepted", data["signal"])
+// 	})
+
+// 	r.GET("/socket.io/*any", gin.WrapH(server))
+
+// 	r.Run(":5000")
+// }
+
 func main() {
 	// Utiliser le mode Release pour la production
 	gin.SetMode(gin.ReleaseMode)
 
+	server := socketio.NewServer(nil)
+
+	server.OnConnect("/", func(s socketio.Conn) error {
+		log.Println("a user connected")
+		s.Emit("me", s.ID())
+		return nil
+	})
+
+	server.OnDisconnect("/", func(s socketio.Conn, _ string) {
+		log.Println("a user disconnected")
+		s.Emit("/", "callEnded")
+	})
+
+	server.OnEvent("/", "callUser", func(s socketio.Conn, data map[string]interface{}) {
+		log.Println("user to call:", data["userToCall"])
+		targetSocketID := data["userToCall"].(string)
+		server.BroadcastToNamespace(targetSocketID, "callUser", map[string]interface{}{
+			"signal": data["signalData"],
+			"from":   data["from"],
+		})
+	})
+
+	server.OnEvent("/", "answerCall", func(s socketio.Conn, data map[string]interface{}) {
+		log.Println("answer to:", data["to"])
+		targetSocketID := data["to"].(string)
+		server.BroadcastToNamespace(targetSocketID, "callAccepted", data["signal"])
+	})
+
 	// Créer un routeur Gin
 	r := gin.New()
 	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{"*"} // Remplacez par vos origines autorisées
+	config.AllowOrigins = []string{"https://safecall-web.vercel.app"} // Remplacez par vos origines autorisées
 	config.AllowMethods = []string{"GET", "POST", "OPTIONS", "PUT", "DELETE"}
 	r.Use(cors.New(config))
 
@@ -41,7 +118,7 @@ func main() {
 
 	// 	c.Next()
 	// })
-
+	r.GET("/socket.io/*any", gin.WrapH(server))
 	r.GET("/.well-known/acme-challenge/:data", acmeFunc)
 
 	r.POST("/login", login)                   // TESTED
