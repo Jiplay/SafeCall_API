@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"sync"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -69,7 +68,7 @@ func acmeFunc(c *gin.Context) {
 
 func main() {
 	// Utiliser le mode Release pour la production
-	gin.SetMode(gin.ReleaseMode)
+	// gin.SetMode(gin.ReleaseMode)
 
 	server := socketio.NewServer(nil)
 
@@ -78,7 +77,7 @@ func main() {
 		s.Emit("me", s.ID())
 		return nil
 	})
-
+	log.Println("WebSocket server created successfully")
 	server.OnDisconnect("/", func(s socketio.Conn, _ string) {
 		log.Println("a user disconnected")
 		s.Emit("/", "callEnded")
@@ -93,6 +92,10 @@ func main() {
 		})
 	})
 
+	server.OnError("/", func(s socketio.Conn, e error) {
+		log.Println("meet error:", e)
+	})
+
 	server.OnEvent("/", "answerCall", func(s socketio.Conn, data map[string]interface{}) {
 		log.Println("answer to:", data["to"])
 		targetSocketID := data["to"].(string)
@@ -102,7 +105,7 @@ func main() {
 	// Créer un routeur Gin
 	r := gin.New()
 	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{"https://safecall-web.vercel.app"} // Remplacez par vos origines autorisées
+	config.AllowOrigins = []string{"*"} // Remplacez par vos origines autorisées
 	config.AllowMethods = []string{"GET", "POST", "OPTIONS", "PUT", "DELETE"}
 	r.Use(cors.New(config))
 
@@ -119,6 +122,9 @@ func main() {
 	// 	c.Next()
 	// })
 	r.GET("/socket.io/*any", gin.WrapH(server))
+	r.POST("/socket.io/*any", gin.WrapH(server))
+	r.StaticFS("/public", http.Dir("../asset"))
+
 	r.GET("/.well-known/acme-challenge/:data", acmeFunc)
 
 	r.POST("/login", login)                   // TESTED
@@ -169,37 +175,37 @@ func main() {
 	r.GET("/tryCall", sendCall)
 
 	// Configurer le serveur HTTPS
-	portHTTPS := 443
-	certFile := "certificates/cert.pem"
-	keyFile := "certificates/privkey.pem"
+	// portHTTPS := 443
+	// certFile := "certificates/cert.pem"
+	// keyFile := "certificates/privkey.pem"
 
 	// Configurer le serveur HTTP
 	portHTTP := 80
 
-	var wg sync.WaitGroup
+	// var wg sync.WaitGroup
 
 	// Lancer le serveur HTTPS dans une goroutine
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		err := r.RunTLS(fmt.Sprintf(":%d", portHTTPS), certFile, keyFile)
-		if err != nil {
-			log.Fatal("Erreur lors du démarrage du serveur HTTPS : ", err)
-		}
-	}()
+	// wg.Add(1)
+	// go func() {
+	// 	defer wg.Done()
+	// 	err := r.RunTLS(fmt.Sprintf(":%d", portHTTPS), certFile, keyFile)
+	// 	if err != nil {
+	// 		log.Fatal("Erreur lors du démarrage du serveur HTTPS : ", err)
+	// 	}
+	// }()
 
 	// Lancer le serveur HTTP dans une goroutine
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		err := http.ListenAndServe(fmt.Sprintf(":%d", portHTTP), r)
-		if err != nil {
-			log.Fatal("Erreur lors du démarrage du serveur HTTP : ", err)
-		}
-	}()
-
+	// wg.Add(1)
+	// go func() {
+	// 	defer wg.Done()
+	// 	err := http.ListenAndServe(fmt.Sprintf(":%d", portHTTP), r)
+	// 	if err != nil {
+	// 		log.Fatal("Erreur lors du démarrage du serveur HTTP : ", err)
+	// 	}
+	// }()
+	http.ListenAndServe(fmt.Sprintf(":%d", portHTTP), r)
 	// Attendre que les serveurs se terminent
-	wg.Wait()
+	// wg.Wait()
 }
 
 // // package main
