@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	sync "sync"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -68,7 +69,7 @@ func acmeFunc(c *gin.Context) {
 
 func main() {
 	// Utiliser le mode Release pour la production
-	// gin.SetMode(gin.ReleaseMode)
+	gin.SetMode(gin.ReleaseMode)
 
 	server := socketio.NewServer(nil)
 
@@ -175,37 +176,37 @@ func main() {
 	r.GET("/tryCall", sendCall)
 
 	// Configurer le serveur HTTPS
-	// portHTTPS := 443
-	// certFile := "certificates/cert.pem"
-	// keyFile := "certificates/privkey.pem"
+	portHTTPS := 443
+	certFile := "certificates/cert.pem"
+	keyFile := "certificates/privkey.pem"
 
 	// Configurer le serveur HTTP
 	portHTTP := 80
 
-	// var wg sync.WaitGroup
+	var wg sync.WaitGroup
 
 	// Lancer le serveur HTTPS dans une goroutine
-	// wg.Add(1)
-	// go func() {
-	// 	defer wg.Done()
-	// 	err := r.RunTLS(fmt.Sprintf(":%d", portHTTPS), certFile, keyFile)
-	// 	if err != nil {
-	// 		log.Fatal("Erreur lors du démarrage du serveur HTTPS : ", err)
-	// 	}
-	// }()
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		err := r.RunTLS(fmt.Sprintf(":%d", portHTTPS), certFile, keyFile)
+		if err != nil {
+			log.Fatal("Erreur lors du démarrage du serveur HTTPS : ", err)
+		}
+	}()
 
 	// Lancer le serveur HTTP dans une goroutine
-	// wg.Add(1)
-	// go func() {
-	// 	defer wg.Done()
-	// 	err := http.ListenAndServe(fmt.Sprintf(":%d", portHTTP), r)
-	// 	if err != nil {
-	// 		log.Fatal("Erreur lors du démarrage du serveur HTTP : ", err)
-	// 	}
-	// }()
-	http.ListenAndServe(fmt.Sprintf(":%d", portHTTP), r)
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		err := http.ListenAndServe(fmt.Sprintf(":%d", portHTTP), r)
+		if err != nil {
+			log.Fatal("Erreur lors du démarrage du serveur HTTP : ", err)
+		}
+	}()
+	// http.ListenAndServe(fmt.Sprintf(":%d", portHTTP), r)
 	// Attendre que les serveurs se terminent
-	// wg.Wait()
+	wg.Wait()
 }
 
 // // package main
