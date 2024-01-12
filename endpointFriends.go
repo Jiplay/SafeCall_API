@@ -28,22 +28,28 @@ func manageFriendEndpoint(c *gin.Context) {
 	}
 	url := "http://profiler:8081/friend"
 
-	requestBody := map[string]interface{}{
-		"UserID":  data.UserID,
-		"Dest":    data.Friend,
-		"Subject": data.Subject,
-		"Action":  data.Action,
-	}
-
-	resp := actionFriendHandler(url, requestBody)
-	if !resp {
+	if data.Subject == "" {
 		c.JSON(503, gin.H{
-			"failed": resp,
+			"failed": "Subject must be initialized",
 		})
 	} else {
-		c.JSON(200, gin.H{
-			"success": "200",
-		})
+		requestBody := map[string]interface{}{
+			"UserID":  data.UserID,
+			"Dest":    data.Friend,
+			"Subject": data.Subject,
+			"Action":  data.Action,
+		}
+
+		resp := actionFriendHandler(url, requestBody)
+		if !resp {
+			c.JSON(503, gin.H{
+				"failed": resp,
+			})
+		} else {
+			c.JSON(200, gin.H{
+				"success": "200",
+			})
+		}
 	}
 }
 

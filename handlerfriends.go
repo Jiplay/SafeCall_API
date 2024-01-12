@@ -6,9 +6,10 @@ import (
 )
 
 type Friends struct {
-	Id      string `bson:"Id"`
-	Subject string `bson:"Subject"`
-	Active  bool   `bson:"Active"`
+	Id       string  `bson:"Id"`
+	Subject  string  `bson:"Subject"`
+	Active   bool    `bson:"Active"`
+	FullName *string `bson:"FullName"`
 }
 
 func actionFriendHandler(url string, body map[string]interface{}) bool {
