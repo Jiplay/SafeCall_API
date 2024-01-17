@@ -34,5 +34,4 @@ func DelFeedbackHandler(user, date string) string {
 		return "No feedback found"
 	}
 	return "Feedback correctly deleted"
-
 }

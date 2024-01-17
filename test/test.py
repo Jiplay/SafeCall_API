@@ -2,7 +2,7 @@ import requests, json
 
 
 def register():
-    url = "http://localhost:8080/register"
+    url = "http://localhost:80/register"
 
     payload = json.dumps({
         "Login": "testguy01",
@@ -25,7 +25,7 @@ def registerFriends():
     i = 0
 
     while i != 2:
-        url = "http://localhost:8080/register"
+        url = "http://localhost:80/register"
         payload = json.dumps({
             "Login": logins[i],
             "Password": "safePasswo0d*",
@@ -44,7 +44,7 @@ def deleteFriends():
     i = 0
 
     while i != 2:
-        url = "http://localhost:8080/delete"
+        url = "http://localhost:80/delete"
         payload = json.dumps({
             "UserID": logins[i],
             })
@@ -57,7 +57,7 @@ def deleteFriends():
 
 
 def login():
-    url = "http://localhost:8080/login/testguy01/safePasswo0d*"
+    url = "http://localhost:80/login/testguy01/safePasswo0d*"
 
     payload = {}
     headers = {}
@@ -68,7 +68,7 @@ def login():
 
 
 def newIdslogin():
-    url = "http://localhost:8080/login/testguy01/PassSaf3à*"
+    url = "http://localhost:80/login/testguy01/PassSaf3à*"
 
     payload = {}
     headers = {}
@@ -79,7 +79,7 @@ def newIdslogin():
 
 
 def getProfile():
-    url = "http://localhost:8080/profile/testguy01/"
+    url = "http://localhost:80/profile/testguy01/"
 
     payload = {}
     headers = {}
@@ -90,7 +90,7 @@ def getProfile():
 
 
 def delete_user():
-    url = "http://localhost:8080/delete"
+    url = "http://localhost:80/delete"
     payload = json.dumps({
         "UserID": "testguy01",
     })
@@ -109,7 +109,7 @@ def update_profile():
     data = ['MyTestDescription', 'MyFullNameTest', 'TestPhoneNB', 'myTest@email.com']
     i = 0
     while i < 4:
-        url = "http://localhost:8080/"+endpoints[i]
+        url = "http://localhost:80/"+endpoints[i]
 
         payload = json.dumps({
             "UserID": "testguy01",
@@ -125,7 +125,7 @@ def update_profile():
 
 
 def addFriend(action):
-    url = "http://localhost:8080/manageFriend"
+    url = "http://localhost:80/manageFriend"
 
     payload = json.dumps({
         "UserID": "testguy01",
@@ -143,7 +143,7 @@ def addFriend(action):
 
 
 def replyFriend(action):
-    url = "http://localhost:8080/replyFriend"
+    url = "http://localhost:80/replyFriend"
 
     payload = json.dumps({
         "UserID": "testguy02",
@@ -160,7 +160,7 @@ def replyFriend(action):
 
 
 def listFriends(user):
-    url = "http://localhost:8080/listFriends/"+ user
+    url = "http://localhost:80/listFriends/"+ user
 
     payload = {}
     headers = {}
@@ -171,7 +171,7 @@ def listFriends(user):
 
 
 def addEvent():
-    url = "http://localhost:8080/addEvent"
+    url = "http://localhost:80/addEvent"
 
     payload = json.dumps({
         "Guest1": "testguy01",
@@ -189,7 +189,7 @@ def addEvent():
 
 
 def listEvent(user):
-    url = "http://localhost:8080/listEvent/"+ user
+    url = "http://localhost:80/listEvent/"+ user
 
     payload = {}
     headers = {}
@@ -200,7 +200,7 @@ def listEvent(user):
 
 
 def editPassword():
-    url = "http://localhost:8080/editPassword"
+    url = "http://localhost:80/editPassword"
 
     payload = json.dumps({
         "UserID": "testguy01",
@@ -217,7 +217,7 @@ def editPassword():
 
 
 def addNotification():
-    url = "http://localhost:8080/AddNotification"
+    url = "http://localhost:80/AddNotification"
 
     
     payload = json.dumps({
@@ -235,7 +235,7 @@ def addNotification():
     return response.text
 
 def delNotification():
-    url = "http://localhost:8080/DelNotification"
+    url = "http://localhost:80/DelNotification"
 
     payload = json.dumps({
 		"UserID": "testguy01",
@@ -250,7 +250,7 @@ def delNotification():
     return response.text
 
 def listNotification(user):
-    url = "http://localhost:8080/notification/"+ user
+    url = "http://localhost:80/notification/"+ user
 
     payload = {}
     headers = {}
@@ -415,7 +415,7 @@ def getnotification():
 
 
 def addFeedback():
-    url = "http://localhost:8080/feedback"
+    url = "http://localhost:80/feedback"
 
     payload = json.dumps({
         "Username": "testguy01",
@@ -432,7 +432,7 @@ def addFeedback():
 
 
 def DelFeedback():
-    url = "http://localhost:8080/delFeedback"
+    url = "http://localhost:80/delFeedback"
 
     payload = json.dumps({
         "Username": "testguy01",
@@ -448,7 +448,7 @@ def DelFeedback():
 
 
 def getFeedback():
-    url = "http://localhost:8080/feedback"
+    url = "http://localhost:80/feedback"
 
     payload = {}
     headers = {}
@@ -473,7 +473,7 @@ def feedback():
 
 
 def addReport():
-    url = "http://localhost:8080/report"
+    url = "http://localhost:80/report"
 
     payload = json.dumps({
         "Username": "testguy01",
@@ -490,7 +490,7 @@ def addReport():
 
 
 def getReport():
-    url = "http://localhost:8080/report"
+    url = "http://localhost:80/report"
 
     payload = {}
     headers = {}
@@ -501,7 +501,7 @@ def getReport():
 
 
 def DelReport():
-    url = "http://localhost:8080/delReport"
+    url = "http://localhost:80/delReport"
 
     payload = json.dumps({
         "Username": "testguy01",
@@ -535,7 +535,7 @@ def report():
 def test_all_scenari():
     # account_creation() ## DONE
     # profile_edition() ## DONE 
-    # friendship()  ## DONE
+    friendship()  ## DONE
     # refuse_friendship() ## Done 
     # delete_friendship()  ## Done
     # event_creation() ## DONE
@@ -545,7 +545,7 @@ def test_all_scenari():
     # delnotification()  ## Done
     # getnotification()  ## DONE
     # feedback()  ## Done
-    report()
+    # report()
     pass
 
 

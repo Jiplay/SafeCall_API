@@ -574,3 +574,49 @@ func DeleteReport(uri string, username string, date string) bool {
 
 	return true
 }
+
+func UpdateReport(uri string, username string, date string, state string) bool {
+	client, err := mongo.NewClient(options.Client().ApplyURI(uri))
+	if err != nil {
+		log.Fatal(err)
+		return false
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	err = client.Connect(ctx)
+	if err != nil {
+		log.Fatal(err)
+		return false
+	}
+
+	defer client.Disconnect(ctx)
+
+	database := client.Database("Support")
+	collection := database.Collection("Report")
+
+	filter := bson.M{
+		"Username": username,
+		"Date":     date,
+	}
+
+	update := bson.M{
+		"$set": bson.M{
+			"Status": state,
+		},
+	}
+
+	result, err := collection.UpdateOne(ctx, filter, update)
+	if err != nil {
+		fmt.Println("Failed to update feedback:", err)
+		return false
+	}
+
+	if result.MatchedCount == 0 {
+		fmt.Println("No feedback found to update")
+		return false
+	}
+
+	return true
+}
