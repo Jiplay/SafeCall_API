@@ -122,8 +122,10 @@ func RegisterHandler(id, psw, email string) string { // TODO Ajouter un call au 
 	}
 	resp := postDataProfiler(url, requestBody)
 	fmt.Println(resp) // FIXME
+	code := codeGenerator()
+	sendMail(cred.AppPassword, wellFormatedEmail, code)
 
-	if !AddUser(cred.Uri, id, psw, string(binary), wellFormatedEmail) {
+	if !AddUser(cred.Uri, id, psw, string(binary), wellFormatedEmail, code) {
 		return "Unknown error while registration"
 	}
 	return "200"
@@ -265,5 +267,17 @@ func contains(slice []string, item string) bool {
 			return true
 		}
 	}
+	return false
+}
+
+func codeCheck(login, code string) bool {
+	cred := getCredentials()
+	resp := GetUserByLogin(cred.Uri, login)
+
+	if resp["codeAccount"] == code {
+		setAccountVerified(cred.Uri, login)
+		return true
+	}
+
 	return false
 }

@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -22,7 +23,7 @@ type Event struct {
 	Confirmed bool   `bson:"Confirmed"`
 }
 
-func AddUser(uri, login, psw, user, email string) bool {
+func AddUser(uri, login, psw, user, email, code string) bool {
 	client, err := mongo.NewClient(options.Client().ApplyURI(uri))
 	if err != nil {
 		log.Fatal(err)
@@ -45,6 +46,8 @@ func AddUser(uri, login, psw, user, email string) bool {
 		{Key: "psw", Value: psw},
 		{Key: "code", Value: ""},
 		{Key: "data", Value: user},
+		{Key: "codeAccount", Value: code},
+		{Key: "verified", Value: false},
 	})
 	return true
 }
@@ -619,4 +622,87 @@ func UpdateReport(uri string, username string, date string, state string) bool {
 	}
 
 	return true
+}
+
+func GetUserByLogin(uri, login string) primitive.M {
+	client, err := mongo.NewClient(options.Client().ApplyURI(uri))
+	if err != nil {
+		log.Fatal(err)
+		return nil
+	}
+	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	err = client.Connect(ctx)
+	if err != nil {
+		log.Fatal(err)
+		return nil
+	}
+	defer client.Disconnect(ctx)
+
+	quickstartDatabase := client.Database("userData")
+	ProfileCollection := quickstartDatabase.Collection("loginInfo")
+
+	var result bson.M
+	querr := ProfileCollection.FindOne(context.TODO(), bson.D{{Key: "login", Value: login}}).Decode(&result)
+	if querr != nil {
+		// ErrNoDocuments means that the filter did not match any documents in the collection
+		if querr == mongo.ErrNoDocuments {
+			return nil
+		}
+		log.Fatal(err)
+	}
+	return result
+}
+
+func setAccountVerified(uri, login string) bool {
+	client, err := mongo.NewClient(options.Client().ApplyURI(uri))
+	if err != nil {
+		log.Fatal(err)
+		return false
+	}
+	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	err = client.Connect(ctx)
+	if err != nil {
+		log.Fatal(err)
+		return false
+	}
+	defer client.Disconnect(ctx)
+
+	quickstartDatabase := client.Database("userData")
+	ProfileCollection := quickstartDatabase.Collection("loginInfo")
+
+	filter := bson.D{{Key: "login", Value: login}}
+	update := bson.D{{Key: "$set", Value: bson.D{{Key: "verified", Value: true}}}}
+	res, err := ProfileCollection.UpdateOne(ctx, filter, update)
+
+	fmt.Printf("Matched %v documents and updated %v documents.\n", res.MatchedCount, res.ModifiedCount)
+	return err == nil
+}
+
+func GetFullUserByLogin(uri, login string) primitive.M {
+	client, err := mongo.NewClient(options.Client().ApplyURI(uri))
+	if err != nil {
+		log.Fatal(err)
+		return nil
+	}
+	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	err = client.Connect(ctx)
+	if err != nil {
+		log.Fatal(err)
+		return nil
+	}
+	defer client.Disconnect(ctx)
+
+	quickstartDatabase := client.Database("userData")
+	ProfileCollection := quickstartDatabase.Collection("loginInfo")
+
+	var result bson.M
+	querr := ProfileCollection.FindOne(context.TODO(), bson.D{{Key: "login", Value: login}}).Decode(&result)
+	if querr != nil {
+		// ErrNoDocuments means that the filter did not match any documents in the collection
+		if querr == mongo.ErrNoDocuments {
+			return nil
+		}
+		log.Fatal(err)
+	}
+	return result
 }

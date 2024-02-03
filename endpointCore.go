@@ -32,6 +32,11 @@ type RegisterStruct struct {
 	Email    string `bson:"Email"`
 }
 
+type VerifyStruct struct {
+	Login string `bson:"Login"`
+	Code  string `bson:"Code"`
+}
+
 type LoginStruct struct {
 	Login    string `bson:"Login"`
 	Password string `bson:"Password"`
@@ -70,6 +75,26 @@ func login(c *gin.Context) {
 	} else {
 		c.JSON(200, gin.H{
 			"success": resp,
+		})
+	}
+}
+
+func verifyAccount(c *gin.Context) {
+	var data VerifyStruct
+	if err := c.ShouldBindJSON(&data); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	resp := codeCheck(data.Login, data.Code)
+
+	if !resp {
+		c.JSON(403, gin.H{
+			"failed": "Bad code",
+		})
+	} else {
+		c.JSON(200, gin.H{
+			"success": "200",
 		})
 	}
 }
@@ -172,4 +197,15 @@ func setPswEndpoint(c *gin.Context) {
 			"success": "200",
 		})
 	}
+}
+
+func verify(c *gin.Context) {
+	userID := c.Param("login")
+	cred := getCredentials()
+	resp := GetFullUserByLogin(cred.Uri, userID)
+
+	c.JSON(200, gin.H{
+		"login":    resp["login"],
+		"verified": resp["verified"],
+	})
 }

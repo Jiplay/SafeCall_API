@@ -25,11 +25,11 @@ func sendMail(password, dest, code string) {
 
 	msg := []byte("To: " + dest + "\r\n" +
 
-		"Subject: Forgot my Password SafeCall\r\n" +
+		"Subject: Welcome to SafeCall !\r\n" +
 
 		"\r\n" +
 
-		"This is the code you'll need to change your password " + code + "\r\n")
+		"Please verify your account, this is you code  " + code + "\r\n")
 
 	err := smtp.SendMail("smtp.gmail.com:587", auth, "safecallnoreply@gmail.com", to, msg)
 

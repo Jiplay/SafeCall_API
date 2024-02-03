@@ -89,6 +89,8 @@ func main() {
 	r.POST("/setPassword", setPswEndpoint)
 	r.POST("/editPassword", editPswEndpoint)
 
+	r.POST("/verifyAccount", verifyAccount)
+	r.GET("/verify/:login", verify)
 	r.POST("/register", register)                  // TESTED
 	r.POST("/profileDescription", postDescription) // TESTED
 	r.POST("/profileFullName", postFullName)       // TESTED
