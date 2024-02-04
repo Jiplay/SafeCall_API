@@ -189,7 +189,7 @@ func setPswEndpoint(c *gin.Context) {
 	resp := setPasswordHandler(data.Email, data.Password)
 
 	if resp != "200" {
-		c.JSON(403, gin.H{
+		c.JSON(503, gin.H{
 			"failed": resp,
 		})
 	} else {
