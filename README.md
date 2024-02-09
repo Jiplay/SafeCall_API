@@ -1,6 +1,6 @@
 # API of SafeCall
 
-SafeCall is our EIP (Epitech Innovative Project), feel free to browse the code, it's far from being perfect, but it helps us to learn a lot !
+SafeCall is our EIP (Epitech Innovative Project), feel free to browse the code, it's far from being perfect, but it helped us to learn a lot !
 
 We passed everything with this project @ EPITECH : 2024 
 
